@@ -132,5 +132,34 @@ public class ProductosCat {
 
         return precio;
     }
+    
+    
+    
+    public static void incrementarStock(String producto, String talla, int cantidad) {
+        ConexionBD conexion = new ConexionBD();
+        CallableStatement stmt = null;
+
+        try {
+            // Preparar llamada al procedimiento almacenado
+            stmt = conexion.conn.prepareCall("{call IncrementarStock(?, ?, ?)}");
+            stmt.setString(1, producto);
+            stmt.setString(2, talla);
+            stmt.setInt(3, cantidad);
+
+            // Ejecutar el procedimiento
+            stmt.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            conexion.desconectar();
+        }
+    }
 
 }

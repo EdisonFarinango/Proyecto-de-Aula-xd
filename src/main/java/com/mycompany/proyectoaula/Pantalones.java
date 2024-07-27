@@ -4,6 +4,15 @@
  */
 package com.mycompany.proyectoaula;
 
+import java.awt.Image;
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
+import javax.swing.ImageIcon;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author USER
@@ -11,15 +20,27 @@ package com.mycompany.proyectoaula;
 public class Pantalones extends javax.swing.JFrame {
 
     private ConexionBD conexion;
-
+    private Carrito carrito;
+    
     public Pantalones() {
         initComponents();
         this.setLocationRelativeTo(this);
         UtilidadesImagen.escalar(lblLogo, "C:/Users/USER/OneDrive/Escritorio/ProyectoAula/imgs/logo.jpg");
         conexion = new ConexionBD();
 
+        limpiarCampos();
         ProductosCat.llenarComboProductos(comboProductos);
 
+        // Añadir un listener al JComboBox
+        comboProductos.addItemListener(evt -> {
+            if (evt.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
+                try {
+                    mostrarImagen();
+                } catch (IOException ex) {
+                    Logger.getLogger(Pantalones.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
     }
 
     @SuppressWarnings("unchecked")
@@ -40,10 +61,11 @@ public class Pantalones extends javax.swing.JFrame {
         btnMandarCarrito = new javax.swing.JLabel();
         jPanel4 = new javax.swing.JPanel();
         btnAñadirTabla = new javax.swing.JLabel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        AreaDescripcion = new javax.swing.JTextArea();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tablaPantalones = new javax.swing.JTable();
+        lblImagen = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -66,7 +88,7 @@ public class Pantalones extends javax.swing.JFrame {
                 .addComponent(lblLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(57, 57, 57)
                 .addComponent(jLabel5)
-                .addContainerGap(102, Short.MAX_VALUE))
+                .addContainerGap(152, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -85,10 +107,13 @@ public class Pantalones extends javax.swing.JFrame {
             }
         });
 
+        jLabel1.setFont(new java.awt.Font("Roboto Black", 0, 14)); // NOI18N
         jLabel1.setText("Seleccione Producto");
 
+        jLabel2.setFont(new java.awt.Font("Roboto Black", 0, 14)); // NOI18N
         jLabel2.setText("Eliga la cantidad:");
 
+        jLabel3.setFont(new java.awt.Font("Roboto Black", 0, 14)); // NOI18N
         jLabel3.setText("Seleccione la talla:");
 
         spinnerCantidad.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -103,6 +128,11 @@ public class Pantalones extends javax.swing.JFrame {
         btnMandarCarrito.setForeground(new java.awt.Color(255, 255, 255));
         btnMandarCarrito.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         btnMandarCarrito.setText("MANDAR AL CARRITO");
+        btnMandarCarrito.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnMandarCarritoMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -120,7 +150,7 @@ public class Pantalones extends javax.swing.JFrame {
         btnAñadirTabla.setFont(new java.awt.Font("Roboto", 1, 18)); // NOI18N
         btnAñadirTabla.setForeground(new java.awt.Color(255, 255, 255));
         btnAñadirTabla.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        btnAñadirTabla.setText("AÑADIR");
+        btnAñadirTabla.setText("AÑADIR A LA LISTA");
         btnAñadirTabla.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnAñadirTablaMouseClicked(evt);
@@ -138,13 +168,7 @@ public class Pantalones extends javax.swing.JFrame {
             .addComponent(btnAñadirTabla, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
-        AreaDescripcion.setColumns(20);
-        AreaDescripcion.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        AreaDescripcion.setRows(5);
-        AreaDescripcion.setBorder(null);
-        jScrollPane2.setViewportView(AreaDescripcion);
-
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tablaPantalones.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
                 {null, null, null, null, null},
@@ -152,7 +176,7 @@ public class Pantalones extends javax.swing.JFrame {
                 {null, null, null, null, null}
             },
             new String [] {
-                "Nro.", "Producto", "Cantidad", "Talla", "Precio"
+                "Nro.", "Producto", "Cantidad", "Talla", "Precio Unitario"
             }
         ) {
             boolean[] canEdit = new boolean [] {
@@ -163,7 +187,20 @@ public class Pantalones extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane3.setViewportView(jTable1);
+        tablaPantalones.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tablaPantalonesMouseClicked(evt);
+            }
+        });
+        jScrollPane3.setViewportView(tablaPantalones);
+
+        lblImagen.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        jLabel4.setFont(new java.awt.Font("Roboto", 1, 24)); // NOI18N
+        jLabel4.setText("Lista de productos");
+
+        jLabel6.setForeground(new java.awt.Color(204, 0, 0));
+        jLabel6.setText("Nota: Doble clic para eliminar de la lista*");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -171,27 +208,40 @@ public class Pantalones extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(19, 19, 19)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGap(19, 19, 19)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel1)
-                            .addComponent(comboProductos, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 340, Short.MAX_VALUE))
-                        .addGap(23, 23, 23)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(spinnerCantidad))
-                        .addGap(37, 37, 37)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(comboTallas, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addComponent(comboProductos, javax.swing.GroupLayout.PREFERRED_SIZE, 340, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(lblImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 340, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addGap(23, 23, 23)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(spinnerCantidad))
+                                .addGap(37, 37, 37)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(comboTallas, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel1Layout.createSequentialGroup()
+                                        .addGap(6, 6, 6)
+                                        .addComponent(jLabel6))
+                                    .addComponent(jLabel4))))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(324, 324, 324)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGap(14, 14, 14)
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -199,7 +249,7 @@ public class Pantalones extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(28, 28, 28)
+                .addGap(25, 25, 25)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(jLabel2)
@@ -210,19 +260,59 @@ public class Pantalones extends javax.swing.JFrame {
                     .addComponent(comboProductos, javax.swing.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
                     .addComponent(comboTallas)
                     .addComponent(spinnerCantidad))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(26, 26, 26)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(42, 42, 42))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel4)
+                                .addGap(8, 8, 8)
+                                .addComponent(jLabel6)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(lblImagen, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(111, 111, 111))
         );
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 840, 560));
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 890, 560));
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void mostrarImagen() throws IOException {
+        String productoSeleccionado = (String) comboProductos.getSelectedItem();
+        if (productoSeleccionado != null) {
+            // Transformar el nombre del producto para coincidir con el nombre del archivo de imagen
+            String imageName = productoSeleccionado.toLowerCase().replace(" ", "_");
+            String[] formatos = {".jpg", ".jpeg", ".png"};
+            String imagePath = "C:/Users/USER/OneDrive/Escritorio/ProyectoAula/imgs/Pantalones/";
+            File imageFile = null;
+
+            // Buscar la imagen con diferentes extensiones
+            for (String formato : formatos) {
+                File tempFile = new File(imagePath + imageName + formato);
+                if (tempFile.exists()) {
+                    imageFile = tempFile;
+                    break;
+                }
+            }
+
+            if (imageFile != null && imageFile.exists()) {
+                Image image = ImageIO.read(imageFile);
+                // Redimensionar la imagen si es necesario
+                Image scaledImage = image.getScaledInstance(lblImagen.getWidth(), lblImagen.getHeight(), Image.SCALE_SMOOTH);
+                lblImagen.setIcon(new ImageIcon(scaledImage));
+            } else {
+                lblImagen.setIcon(null); // No se encontró la imagen
+                JOptionPane.showMessageDialog(this, "Imagen no encontrada para el producto seleccionado.");
+            }
+        }
+    }
+
 
     private void btnAñadirTablaMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAñadirTablaMouseClicked
         String productoSeleccionado = (String) comboProductos.getSelectedItem();
@@ -230,19 +320,52 @@ public class Pantalones extends javax.swing.JFrame {
         int cantidadIngresada = (int) spinnerCantidad.getValue();
 
         if (productoSeleccionado != null && tallaSeleccionada != null) {
-            double precio = ProductosCat.obtenerPrecio(productoSeleccionado, tallaSeleccionada);
+            if (cantidadIngresada > 0) { // Validar que la cantidad sea mayor que 0
+                double precio = ProductosCat.obtenerPrecio(productoSeleccionado, tallaSeleccionada);
+                int stockDisponible = ProductosCat.obtenerStockDisponible(productoSeleccionado, tallaSeleccionada);
 
-            javax.swing.table.DefaultTableModel modeloTabla = (javax.swing.table.DefaultTableModel) jTable1.getModel();
+                javax.swing.table.DefaultTableModel modeloTabla = (javax.swing.table.DefaultTableModel) tablaPantalones.getModel();
 
-            modeloTabla.insertRow(0, new Object[]{
-                modeloTabla.getRowCount() + 1, // Nro.
-                productoSeleccionado,
-                cantidadIngresada,
-                tallaSeleccionada,
-                precio
-            });
-            limpiarCampos();
-            
+                // Verificar si el producto ya está en la tabla
+                boolean productoYaEnTabla = false;
+                int cantidadTotalEnTabla = 0;
+
+                for (int i = 0; i < modeloTabla.getRowCount(); i++) {
+                    String productoEnTabla = (String) modeloTabla.getValueAt(i, 1);
+                    String tallaEnTabla = (String) modeloTabla.getValueAt(i, 3);
+                    if (productoSeleccionado.equals(productoEnTabla) && tallaSeleccionada.equals(tallaEnTabla)) {
+                        cantidadTotalEnTabla += (int) modeloTabla.getValueAt(i, 2);
+                        productoYaEnTabla = true;
+                    }
+                }
+
+                // Verificar si la cantidad ingresada supera el stock disponible
+                if (productoYaEnTabla) {
+                    stockDisponible -= cantidadTotalEnTabla;
+                }
+
+                if (cantidadIngresada <= stockDisponible) {
+                    modeloTabla.insertRow(0, new Object[]{
+                        modeloTabla.getRowCount() + 1, // Nro.
+                        productoSeleccionado,
+                        cantidadIngresada,
+                        tallaSeleccionada,
+                        precio
+                    });
+                    limpiarCampos();
+                    ocultarImagen();
+                } else {
+                    javax.swing.JOptionPane.showMessageDialog(this,
+                            "La cantidad ingresada excede el stock disponible. Stock disponible: " + stockDisponible,
+                            "Error de stock",
+                            javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                }
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                        "La cantidad debe ser mayor que 0.",
+                        "Error de cantidad",
+                        javax.swing.JOptionPane.ERROR_MESSAGE);
+            }
         } else {
             javax.swing.JOptionPane.showMessageDialog(this,
                     "Por favor, seleccione un producto y una talla.",
@@ -250,6 +373,10 @@ public class Pantalones extends javax.swing.JFrame {
                     javax.swing.JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnAñadirTablaMouseClicked
+
+    private void ocultarImagen() {
+        lblImagen.setIcon(null); // Elimina la imagen del JLabel
+    }
 
     private void comboProductosItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_comboProductosItemStateChanged
         if (evt.getStateChange() == java.awt.event.ItemEvent.SELECTED) {
@@ -265,6 +392,34 @@ public class Pantalones extends javax.swing.JFrame {
 
         validarStock();
     }//GEN-LAST:event_spinnerCantidadStateChanged
+
+    private void tablaPantalonesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tablaPantalonesMouseClicked
+        if (evt.getClickCount() == 2) { // Doble clic
+            int row = tablaPantalones.rowAtPoint(evt.getPoint());
+            if (row >= 0) {
+                javax.swing.table.DefaultTableModel modeloTabla = (javax.swing.table.DefaultTableModel) tablaPantalones.getModel();
+                String productoEliminado = (String) modeloTabla.getValueAt(row, 1);
+                String tallaEliminada = (String) modeloTabla.getValueAt(row, 3);
+                int cantidadEliminada = (int) modeloTabla.getValueAt(row, 2);
+
+                // Incrementar stock
+                ProductosCat.incrementarStock(productoEliminado, tallaEliminada, cantidadEliminada);
+
+                modeloTabla.removeRow(row);
+            }
+        }
+    }//GEN-LAST:event_tablaPantalonesMouseClicked
+
+    private void btnMandarCarritoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnMandarCarritoMouseClicked
+
+    }//GEN-LAST:event_btnMandarCarritoMouseClicked
+
+    private void eliminarFila(int fila) {
+        javax.swing.table.DefaultTableModel modeloTabla = (javax.swing.table.DefaultTableModel) tablaPantalones.getModel();
+        if (fila >= 0 && fila < modeloTabla.getRowCount()) {
+            modeloTabla.removeRow(fila);
+        }
+    }
 
     private void validarStock() {
         String productoSeleccionado = (String) comboProductos.getSelectedItem();
@@ -319,11 +474,9 @@ public class Pantalones extends javax.swing.JFrame {
         comboProductos.setSelectedIndex(-1);
         comboTallas.setSelectedIndex(-1);
         spinnerCantidad.setValue(0);
-        AreaDescripcion.setText("");
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTextArea AreaDescripcion;
     private javax.swing.JLabel btnAñadirTabla;
     private javax.swing.JLabel btnMandarCarrito;
     private javax.swing.JComboBox<String> comboProductos;
@@ -331,15 +484,17 @@ public class Pantalones extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JLabel lblImagen;
     private javax.swing.JLabel lblLogo;
     private javax.swing.JSpinner spinnerCantidad;
+    private javax.swing.JTable tablaPantalones;
     // End of variables declaration//GEN-END:variables
 }
