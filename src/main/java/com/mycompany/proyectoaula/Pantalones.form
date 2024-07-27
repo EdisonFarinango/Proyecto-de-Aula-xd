@@ -332,7 +332,7 @@
                     <Column editable="false" title="Producto" type="java.lang.Object"/>
                     <Column editable="false" title="Cantidad" type="java.lang.Object"/>
                     <Column editable="false" title="Talla" type="java.lang.Object"/>
-                    <Column editable="false" title="Precio Unitario" type="java.lang.Object"/>
+                    <Column editable="false" title="Precio Unitario" type="java.lang.Double"/>
                   </Table>
                 </Property>
               </Properties>

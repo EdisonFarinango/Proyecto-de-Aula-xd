@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -21,14 +22,13 @@ public class Pantalones extends javax.swing.JFrame {
 
     private ConexionBD conexion;
     private Carrito carrito;
-    
+
     public Pantalones() {
         initComponents();
         this.setLocationRelativeTo(this);
         UtilidadesImagen.escalar(lblLogo, "C:/Users/USER/OneDrive/Escritorio/ProyectoAula/imgs/logo.jpg");
         conexion = new ConexionBD();
 
-        limpiarCampos();
         ProductosCat.llenarComboProductos(comboProductos);
 
         // Añadir un listener al JComboBox
@@ -41,6 +41,8 @@ public class Pantalones extends javax.swing.JFrame {
                 }
             }
         });
+
+        TableUtils.centerText(tablaPantalones);
     }
 
     @SuppressWarnings("unchecked")
@@ -179,9 +181,16 @@ public class Pantalones extends javax.swing.JFrame {
                 "Nro.", "Producto", "Cantidad", "Talla", "Precio Unitario"
             }
         ) {
+            Class[] types = new Class [] {
+                java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Double.class
+            };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false, false
             };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
@@ -411,7 +420,32 @@ public class Pantalones extends javax.swing.JFrame {
     }//GEN-LAST:event_tablaPantalonesMouseClicked
 
     private void btnMandarCarritoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnMandarCarritoMouseClicked
+        eliminarFilasVacias();
 
+// Crear una nueva instancia de Carrito
+        Carrito carrito = new Carrito();
+        carrito.setVisible(true);
+
+        // Obtener el modelo de la tabla Pantalones
+        DefaultTableModel modeloPantalones = (DefaultTableModel) tablaPantalones.getModel();
+
+        // Iterar sobre todas las filas de tablaPantalones
+        for (int i = 0; i < modeloPantalones.getRowCount(); i++) {
+            // Obtener los datos de la fila actual
+            String nombreProducto = (String) modeloPantalones.getValueAt(i, 1); // Nombre del producto
+            String tallaProducto = (String) modeloPantalones.getValueAt(i, 3);  // Talla
+
+            // Obtener la cantidad, asegurándose de que no sea nulo
+            Object cantidadObj = modeloPantalones.getValueAt(i, 2);
+            int cantidad = (cantidadObj != null) ? ((Integer) cantidadObj).intValue() : 0;
+
+            // Obtener el precio unitario, asegurándose de que no sea nulo
+            Object precioObj = modeloPantalones.getValueAt(i, 4);
+            double precioUnitario = (precioObj != null) ? ((Double) precioObj).doubleValue() : 0.0;
+
+            // Llamar al método en la instancia de Carrito
+            carrito.agregarProductoAlCarrito(nombreProducto, tallaProducto, cantidad, precioUnitario);
+        }
     }//GEN-LAST:event_btnMandarCarritoMouseClicked
 
     private void eliminarFila(int fila) {
@@ -475,6 +509,27 @@ public class Pantalones extends javax.swing.JFrame {
         comboTallas.setSelectedIndex(-1);
         spinnerCantidad.setValue(0);
     }
+
+    private void eliminarFilasVacias() {
+        DefaultTableModel modeloPantalones = (DefaultTableModel) tablaPantalones.getModel();
+
+        // Iterar sobre las filas de la tabla
+        for (int i = modeloPantalones.getRowCount() - 1; i >= 0; i--) {
+            // Verificar si la fila está vacía
+            boolean filaVacia = true;
+            for (int j = 0; j < modeloPantalones.getColumnCount(); j++) {
+                if (modeloPantalones.getValueAt(i, j) != null && !modeloPantalones.getValueAt(i, j).toString().trim().isEmpty()) {
+                    filaVacia = false;
+                    break;
+                }
+            }
+            // Eliminar la fila si está vacía
+            if (filaVacia) {
+                modeloPantalones.removeRow(i);
+            }
+        }
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel btnAñadirTabla;

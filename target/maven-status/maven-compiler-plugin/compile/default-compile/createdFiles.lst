@@ -16,6 +16,7 @@ com\mycompany\proyectoaula\Productos$1.class
 com\mycompany\proyectoaula\RecuperacionContrasenia.class
 com\mycompany\proyectoaula\RegistrarUsuario$2.class
 com\mycompany\proyectoaula\VentanaLogin$4.class
+com\mycompany\proyectoaula\TableUtils.class
 com\mycompany\proyectoaula\Productos.class
 com\mycompany\proyectoaula\Carrito$3.class
 com\mycompany\proyectoaula\Pantalones$2.class
@@ -24,6 +25,7 @@ com\mycompany\proyectoaula\VentanaLogin$3.class
 com\mycompany\proyectoaula\Pantalones$4.class
 com\mycompany\proyectoaula\VentanaLogin$1.class
 com\mycompany\proyectoaula\VentanaLogin$6.class
+com\mycompany\proyectoaula\ProductoEnCarrito.class
 com\mycompany\proyectoaula\ConexionBD.class
 com\mycompany\proyectoaula\RegistrarUsuario$1.class
 com\mycompany\proyectoaula\VentanaLogin$5.class

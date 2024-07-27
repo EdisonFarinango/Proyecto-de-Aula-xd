@@ -4,6 +4,9 @@
  */
 package com.mycompany.proyectoaula;
 
+
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author USER
@@ -17,11 +20,8 @@ public class Carrito extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(this);
         UtilidadesImagen.escalar(lblLogo, "C:/Users/USER/OneDrive/Escritorio/ProyectoAula/imgs/logo.jpg");
-
+        TableUtils.centerText(tablaCarrito);
     }
-    
-
-
 
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -82,6 +82,7 @@ public class Carrito extends javax.swing.JFrame {
 
         jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1000, 60));
 
+        tablaCarrito.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
         tablaCarrito.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null},
@@ -93,14 +94,22 @@ public class Carrito extends javax.swing.JFrame {
                 "Producto", "Talla", "Cantidad", "Precio Unitario", "Subtotal", "Total"
             }
         ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Object.class, java.lang.Object.class
+            };
             boolean[] canEdit = new boolean [] {
                 false, false, false, false, false, false
             };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
+        tablaCarrito.setShowGrid(false);
         jScrollPane1.setViewportView(tablaCarrito);
 
         jPanel1.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 140, 580, 410));
@@ -301,8 +310,18 @@ public class Carrito extends javax.swing.JFrame {
         });
     }
 
-    
-    
+public void agregarProductoAlCarrito(String nombreProducto, String tallaProducto, int cantidad, double precioUnitario) {
+    DefaultTableModel modelo = (DefaultTableModel) tablaCarrito.getModel();
+
+    double subtotal = cantidad * precioUnitario;
+
+    // Insertar la fila al inicio de la tabla (índice 0)
+    modelo.insertRow(0, new Object[]{nombreProducto, tallaProducto, cantidad, precioUnitario, subtotal});
+
+    // Actualizar totales después de agregar una nueva fila
+}
+
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel btnAñadirMas;
     private javax.swing.JLabel btnFinalizarCompra;
