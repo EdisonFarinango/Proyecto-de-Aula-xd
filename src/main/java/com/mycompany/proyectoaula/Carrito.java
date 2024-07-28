@@ -1,24 +1,27 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package com.mycompany.proyectoaula;
 
+import java.sql.CallableStatement;
+import java.sql.Date;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Types;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
-/**
- *
- * @author USER
- */
 public class Carrito extends javax.swing.JFrame {
 
     private MetodoDePago metodo;
+    private boolean metodoConfirmado = false;
+    private ConexionBD conexionBD;
 
     /**
      * Creates new form Carrito
      */
     public Carrito() {
+        conexionBD = new ConexionBD();
+
         initComponents();
         this.setLocationRelativeTo(this);
         UtilidadesImagen.escalar(lblLogo, "C:/Users/USER/OneDrive/Escritorio/ProyectoAula/imgs/logo.jpg");
@@ -40,6 +43,9 @@ public class Carrito extends javax.swing.JFrame {
 
         MetodoDePago.cargarMetodosDePago(model);
         comboMetodo.setModel(model);
+
+        lblCedula.setText(Sesion.getCedula());
+
     }
 
     @SuppressWarnings("unchecked")
@@ -50,6 +56,9 @@ public class Carrito extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         lblLogo = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
+        lblCedulaLogin = new javax.swing.JLabel();
+        lblCedula = new javax.swing.JLabel();
+        lblIDPago = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         tablaCarrito = new javax.swing.JTable();
         jPanel3 = new javax.swing.JPanel();
@@ -83,6 +92,8 @@ public class Carrito extends javax.swing.JFrame {
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("CARRITO DE COMPRAS");
 
+        lblCedulaLogin.setForeground(new java.awt.Color(255, 255, 255));
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -92,7 +103,13 @@ public class Carrito extends javax.swing.JFrame {
                 .addComponent(lblLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(142, 142, 142)
                 .addComponent(jLabel1)
-                .addContainerGap(221, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(lblCedula, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(lblIDPago, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lblCedulaLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -101,6 +118,16 @@ public class Carrito extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(lblLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1)))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGap(12, 12, 12)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addComponent(lblCedula, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(lblCedulaLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(2, 2, 2)
+                        .addComponent(lblIDPago, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1000, 60));
@@ -340,11 +367,115 @@ public class Carrito extends javax.swing.JFrame {
     }//GEN-LAST:event_btnAñadirMasMouseClicked
 
     private void btnFinalizarCompraMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnFinalizarCompraMouseClicked
-        // TODO add your handling code here:
+        obtenerIDMetodoPago();
+        if (!metodoConfirmado) {
+            // Mostrar mensaje de advertencia
+            JOptionPane.showMessageDialog(null, "Primero debes confirmar el método de pago.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+        } else {
+            // Lógica para finalizar la compra
+            finalizarCompra();
+
+            JOptionPane.showMessageDialog(null, "Compra Finalizada");
+        }
+
     }//GEN-LAST:event_btnFinalizarCompraMouseClicked
 
+    private void finalizarCompra() {
+        // Obtener los valores del contexto
+        String cedula = lblCedula.getText();
+
+        // Reemplazar la coma por un punto para los valores de tipo double
+        double total = parseDoubleWithComma(fieldTotal.getText());
+        double subtotal = parseDoubleWithComma(fieldSubtotal.getText());
+
+        // Calcular el IVA (por ejemplo, el 21% del subtotal)
+        double iva = parseDoubleWithComma(fieldIva.getText());
+
+        int metodoPago = Integer.parseInt(lblIDPago.getText());
+        java.sql.Date fecha = new java.sql.Date(System.currentTimeMillis());
+
+        // Llamar al procedimiento almacenado
+        String sql = "{call GestionarFactura(?, ?, ?, ?, ?, ?, ?, ?)}";
+
+        try (CallableStatement stmt = conexionBD.conn.prepareCall(sql)) {
+            // Configurar parámetros para el procedimiento almacenado
+            stmt.setInt(1, 2); // Opción 2 para INSERT
+            stmt.setNull(2, Types.INTEGER); // p_fac_id puede ser NULL si es autoincremental
+            stmt.setString(3, cedula);
+            stmt.setDouble(4, total);
+            stmt.setDouble(5, iva); // IVA
+            stmt.setDate(6, fecha);
+            stmt.setInt(7, metodoPago);
+            stmt.setDouble(8, subtotal);
+
+            // Ejecutar el procedimiento almacenado
+            stmt.execute();
+            System.out.println("Compra finalizada y factura almacenada.");
+
+        } catch (SQLException e) {
+            System.out.println("Error al almacenar la factura: " + e.getMessage());
+        } finally {
+            conexionBD.desconectar();
+        }
+    }
+
+    private double parseDoubleWithComma(String value) {
+        if (value == null || value.isEmpty()) {
+            return 0.0;
+        }
+        // Reemplazar la coma por punto
+        value = value.replace(',', '.');
+        try {
+            return Double.parseDouble(value);
+        } catch (NumberFormatException e) {
+            System.out.println("Error al convertir el número: " + e.getMessage());
+            return 0.0;
+        }
+    }
+
+    private void obtenerIDMetodoPago() {
+        String metodoPagoSeleccionado = (String) comboMetodo.getSelectedItem();
+        if (metodoPagoSeleccionado != null) {
+            ConexionBD conexion = new ConexionBD();
+            Statement st = null;
+            ResultSet rs = null;
+
+            try {
+                st = conexion.conn.createStatement();
+                String query = "SELECT metodo_id FROM metodos_pago WHERE metodo_nombre = '" + metodoPagoSeleccionado + "'";
+                rs = st.executeQuery(query);
+
+                if (rs.next()) {
+                    int idPago = rs.getInt("metodo_id");
+                    lblIDPago.setText("" + idPago);
+                } else {
+                    lblIDPago.setText("ID Pago: No encontrado");
+                }
+            } catch (SQLException ex) {
+                lblIDPago.setText("Error al consultar: " + ex.getMessage());
+            } finally {
+                try {
+                    if (rs != null) {
+                        rs.close();
+                    }
+                    if (st != null) {
+                        st.close();
+                    }
+                } catch (SQLException ex) {
+                    System.out.println("Error al cerrar recursos: " + ex.getMessage());
+                }
+                conexion.desconectar();
+            }
+        }
+    }
+
     private void btnConfirmarMetodoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnConfirmarMetodoMouseClicked
-        // Obtener el método de pago seleccionado
+        // Actualizar el estado de la variable
+        metodoConfirmado = true;
+
+        // Habilitar el botón Finalizar Compra
+        btnFinalizarCompra.setEnabled(true);
+        obtenerIDMetodoPago();
         String metodoSeleccionado = (String) comboMetodo.getSelectedItem();
 
         // Verificar si el método de pago seleccionado es "Transferencia"
@@ -460,6 +591,9 @@ public class Carrito extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
+    private javax.swing.JLabel lblCedula;
+    private javax.swing.JLabel lblCedulaLogin;
+    private javax.swing.JLabel lblIDPago;
     private javax.swing.JLabel lblLogo;
     private javax.swing.JTable tablaCarrito;
     // End of variables declaration//GEN-END:variables

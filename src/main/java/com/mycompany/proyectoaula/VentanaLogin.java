@@ -45,6 +45,7 @@ public class VentanaLogin extends javax.swing.JFrame {
         BtnRegistrarseNuevo = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
+        lblCedula = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -208,6 +209,7 @@ public class VentanaLogin extends javax.swing.JFrame {
         );
 
         jPanel1.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(210, 120, 430, 400));
+        jPanel1.add(lblCedula, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 150, 100, 30));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -267,28 +269,34 @@ public class VentanaLogin extends javax.swing.JFrame {
         conexion.conectar();
 
         try {
-            String sqlUsuarios = "SELECT * FROM Usuarios WHERE usu_usuario=? AND usu_clave=?";
+            // Consulta para obtener la cédula del usuario
+            String sqlUsuarios = "SELECT usu_cedula FROM Usuarios WHERE usu_usuario=? AND usu_clave=?";
             PreparedStatement psUsuarios = conexion.conn.prepareStatement(sqlUsuarios);
             psUsuarios.setString(1, usuario);
             psUsuarios.setString(2, contrasenia);
             ResultSet rsUsuarios = psUsuarios.executeQuery();
 
             if (rsUsuarios.next()) {
-                if (usuario.equals("admin") && contrasenia.equals("admin")) {
-                    JOptionPane.showMessageDialog(this, "Inicio de sesión como administrador exitoso");
+                // Obtiene la cédula y la muestra en lblCedula
+                String cedula = rsUsuarios.getString("usu_cedula");
+                Sesion.setCedula(cedula);
 
+                // Mensaje de éxito
+                System.out.println("Inicio de sesión exitoso");
+
+                // Abre la ventana correspondiente según el usuario
+                if (usuario.equals("admin") && contrasenia.equals("admin")) {
                     RegistrarUsuario ventanaRegistro = new RegistrarUsuario();
                     ventanaRegistro.setVisible(true);
                     this.dispose();
                 } else {
-                    JOptionPane.showMessageDialog(this, "Inicio de sesión como empleado exitoso");
-
                     Productos ventanaProductos = new Productos();
                     ventanaProductos.setVisible(true);
                     this.dispose();
                 }
             } else {
                 JOptionPane.showMessageDialog(this, "Usuario o contraseña incorrectos");
+                lblCedula.setText(""); // Limpia el label si las credenciales son incorrectas
             }
 
             rsUsuarios.close();
@@ -365,6 +373,7 @@ public class VentanaLogin extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JLabel lblCedula;
     private javax.swing.JLabel lblLogin;
     private javax.swing.JLabel lblLogo;
     // End of variables declaration//GEN-END:variables

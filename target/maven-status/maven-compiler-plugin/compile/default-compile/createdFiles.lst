@@ -28,6 +28,7 @@ com\mycompany\proyectoaula\Pantalones$1.class
 com\mycompany\proyectoaula\Transferencia$2.class
 com\mycompany\proyectoaula\VentanaLogin$7.class
 com\mycompany\proyectoaula\Productos$1.class
+com\mycompany\proyectoaula\Sesion.class
 com\mycompany\proyectoaula\VentanaLogin$4.class
 com\mycompany\proyectoaula\TableUtils.class
 com\mycompany\proyectoaula\Productos.class
@@ -38,6 +39,7 @@ com\mycompany\proyectoaula\VentanaLogin$3.class
 com\mycompany\proyectoaula\Pantalones$4.class
 com\mycompany\proyectoaula\VentanaLogin$6.class
 com\mycompany\proyectoaula\ProductoEnCarrito.class
+com\mycompany\proyectoaula\CarritoUtils.class
 com\mycompany\proyectoaula\RegistrarUsuario$1.class
 com\mycompany\proyectoaula\MetodoDePago.class
 com\mycompany\proyectoaula\UtilidadesImagen.class

@@ -23,6 +23,8 @@ public class Productos extends javax.swing.JFrame {
 
     }
 
+
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -229,9 +231,9 @@ public class Productos extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jLabel2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel2MouseClicked
-Pantalones pants = new Pantalones();
-pants.setVisible(true);
-this.dispose();
+        Pantalones pants = new Pantalones();
+        pants.setVisible(true);
+        this.dispose();
 
     }//GEN-LAST:event_jLabel2MouseClicked
 
