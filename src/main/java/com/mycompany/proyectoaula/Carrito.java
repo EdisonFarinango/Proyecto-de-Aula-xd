@@ -4,7 +4,7 @@
  */
 package com.mycompany.proyectoaula;
 
-
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -12,6 +12,8 @@ import javax.swing.table.DefaultTableModel;
  * @author USER
  */
 public class Carrito extends javax.swing.JFrame {
+
+    private MetodoDePago metodo;
 
     /**
      * Creates new form Carrito
@@ -21,6 +23,23 @@ public class Carrito extends javax.swing.JFrame {
         this.setLocationRelativeTo(this);
         UtilidadesImagen.escalar(lblLogo, "C:/Users/USER/OneDrive/Escritorio/ProyectoAula/imgs/logo.jpg");
         TableUtils.centerText(tablaCarrito);
+
+        DefaultTableModel modelo = (DefaultTableModel) tablaCarrito.getModel();
+        // Limpiar las filas existentes (en caso de que haya alguna)
+        while (modelo.getRowCount() > 0) {
+            modelo.removeRow(0);
+        }
+        actualizarTotales();
+
+        // Cargar los productos desde la clase global
+        for (Producto producto : CarritoData.getProductos()) {
+            modelo.addRow(new Object[]{producto.getNombre(), producto.getTalla(), producto.getCantidad(), producto.getPrecioUnitario(), producto.getSubtotal()});
+        }
+
+        DefaultComboBoxModel<String> model = new DefaultComboBoxModel<>();
+
+        MetodoDePago.cargarMetodosDePago(model);
+        comboMetodo.setModel(model);
     }
 
     @SuppressWarnings("unchecked")
@@ -43,9 +62,13 @@ public class Carrito extends javax.swing.JFrame {
         jSeparator1 = new javax.swing.JSeparator();
         jSeparator2 = new javax.swing.JSeparator();
         jSeparator3 = new javax.swing.JSeparator();
-        jTextField1 = new javax.swing.JTextField();
-        jTextField2 = new javax.swing.JTextField();
-        jTextField3 = new javax.swing.JTextField();
+        fieldSubtotal = new javax.swing.JTextField();
+        fieldIva = new javax.swing.JTextField();
+        fieldTotal = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
+        comboMetodo = new javax.swing.JComboBox<>();
+        jPanel6 = new javax.swing.JPanel();
+        btnConfirmarMetodo = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
         btnAñadirMas = new javax.swing.JLabel();
 
@@ -85,20 +108,17 @@ public class Carrito extends javax.swing.JFrame {
         tablaCarrito.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
         tablaCarrito.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null},
-                {null, null, null, null, null, null}
+
             },
             new String [] {
-                "Producto", "Talla", "Cantidad", "Precio Unitario", "Subtotal", "Total"
+                "Producto", "Talla", "Cantidad", "Precio Unitario", "Subtotal"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Object.class, java.lang.Object.class
+                java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Double.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
+                false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -158,17 +178,49 @@ public class Carrito extends javax.swing.JFrame {
         jLabel7.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         jLabel7.setText("TOTAL");
 
-        jTextField1.setEditable(false);
-        jTextField1.setBackground(new java.awt.Color(255, 255, 255));
-        jTextField1.setBorder(null);
+        fieldSubtotal.setEditable(false);
+        fieldSubtotal.setBackground(new java.awt.Color(255, 255, 255));
+        fieldSubtotal.setFont(new java.awt.Font("Roboto", 0, 24)); // NOI18N
+        fieldSubtotal.setBorder(null);
 
-        jTextField2.setEditable(false);
-        jTextField2.setBackground(new java.awt.Color(255, 255, 255));
-        jTextField2.setBorder(null);
+        fieldIva.setEditable(false);
+        fieldIva.setBackground(new java.awt.Color(255, 255, 255));
+        fieldIva.setFont(new java.awt.Font("Roboto", 0, 24)); // NOI18N
+        fieldIva.setBorder(null);
 
-        jTextField3.setEditable(false);
-        jTextField3.setBackground(new java.awt.Color(255, 255, 255));
-        jTextField3.setBorder(null);
+        fieldTotal.setEditable(false);
+        fieldTotal.setBackground(new java.awt.Color(255, 255, 255));
+        fieldTotal.setFont(new java.awt.Font("Roboto", 0, 24)); // NOI18N
+        fieldTotal.setBorder(null);
+
+        jLabel8.setFont(new java.awt.Font("Roboto Black", 0, 14)); // NOI18N
+        jLabel8.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel8.setText("SELECCIONAR MÉTODO DE PAGO:");
+
+        comboMetodo.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+
+        jPanel6.setBackground(new java.awt.Color(0, 0, 0));
+
+        btnConfirmarMetodo.setFont(new java.awt.Font("Roboto", 1, 18)); // NOI18N
+        btnConfirmarMetodo.setForeground(new java.awt.Color(255, 255, 255));
+        btnConfirmarMetodo.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        btnConfirmarMetodo.setText("Confirmar");
+        btnConfirmarMetodo.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnConfirmarMetodoMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnConfirmarMetodo, javax.swing.GroupLayout.DEFAULT_SIZE, 98, Short.MAX_VALUE)
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(btnConfirmarMetodo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -180,25 +232,32 @@ public class Carrito extends javax.swing.JFrame {
                     .addComponent(jLabel4)
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGap(18, 18, 18)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addGroup(jPanel4Layout.createSequentialGroup()
+                                    .addComponent(jLabel5)
+                                    .addGap(43, 43, 43)
+                                    .addComponent(fieldSubtotal, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 319, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 319, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 319, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(jPanel4Layout.createSequentialGroup()
+                                    .addComponent(jLabel6)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(fieldIva, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(37, 37, 37))
+                                .addGroup(jPanel4Layout.createSequentialGroup()
+                                    .addComponent(jLabel7)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(fieldTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGap(40, 40, 40)))
                             .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addComponent(jLabel5)
-                                .addGap(43, 43, 43)
-                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 319, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 319, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 319, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addComponent(jLabel6)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(37, 37, 37))
-                            .addGroup(jPanel4Layout.createSequentialGroup()
-                                .addComponent(jLabel7)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 146, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(40, 40, 40)))))
-                .addContainerGap(35, Short.MAX_VALUE))
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(comboMetodo, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(jLabel8, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(18, 18, 18)
+                                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addContainerGap(17, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -208,22 +267,28 @@ public class Carrito extends javax.swing.JFrame {
                 .addGap(28, 28, 28)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(fieldSubtotal, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(10, 10, 10)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(fieldIva, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator2, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(19, 19, 19)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
-                    .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(fieldTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 38, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator3, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(119, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(comboMetodo, javax.swing.GroupLayout.DEFAULT_SIZE, 30, Short.MAX_VALUE))
+                .addContainerGap(42, Short.MAX_VALUE))
         );
 
         jPanel1.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 70, 380, 380));
@@ -268,12 +333,38 @@ public class Carrito extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAñadirMasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnAñadirMasMouseClicked
-        // TODO add your handling code here:
+        Productos pants = new Productos();
+        pants.setVisible(true);
+        this.dispose();
+
     }//GEN-LAST:event_btnAñadirMasMouseClicked
 
     private void btnFinalizarCompraMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnFinalizarCompraMouseClicked
         // TODO add your handling code here:
     }//GEN-LAST:event_btnFinalizarCompraMouseClicked
+
+    private void btnConfirmarMetodoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnConfirmarMetodoMouseClicked
+        // Obtener el método de pago seleccionado
+        String metodoSeleccionado = (String) comboMetodo.getSelectedItem();
+
+        // Verificar si el método de pago seleccionado es "Transferencia"
+        if ("Transferencia".equals(metodoSeleccionado)) {
+            // Crear una instancia de la ventana de Transferencia
+            Transferencia ventanaTransferencia = new Transferencia();
+            ventanaTransferencia.setVisible(true);
+
+            // Cerrar la ventana actual (Carrito)
+        }
+        if ("Tarjeta de Credito/Debito".equals(metodoSeleccionado)) {
+            // Crear una instancia de la ventana de Transferencia
+            Credito ventanaTransferencia = new Credito();
+            ventanaTransferencia.setVisible(true);
+        } else {
+            // Aquí puedes manejar otros casos de métodos de pago si es necesario
+            // Por ejemplo, mostrar un mensaje al usuario o redirigir a una ventana diferente
+            // JOptionPane.showMessageDialog(this, "Método de pago no soportado.");
+        }
+    }//GEN-LAST:event_btnConfirmarMetodoMouseClicked
 
     /**
      * @param args the command line arguments
@@ -310,38 +401,65 @@ public class Carrito extends javax.swing.JFrame {
         });
     }
 
-public void agregarProductoAlCarrito(String nombreProducto, String tallaProducto, int cantidad, double precioUnitario) {
-    DefaultTableModel modelo = (DefaultTableModel) tablaCarrito.getModel();
+    public void agregarProductoAlCarrito(String nombreProducto, String tallaProducto, int cantidad, double precioUnitario) {
+        DefaultTableModel modelo = (DefaultTableModel) tablaCarrito.getModel();
+        double subtotal = cantidad * precioUnitario;
+        // Agregar la fila al final de la tabla
+        modelo.addRow(new Object[]{nombreProducto, tallaProducto, cantidad, precioUnitario, subtotal});
 
-    double subtotal = cantidad * precioUnitario;
+        // Guardar el producto en la clase global
+        CarritoData.addProducto(new Producto(nombreProducto, tallaProducto, cantidad, precioUnitario));
 
-    // Insertar la fila al inicio de la tabla (índice 0)
-    modelo.insertRow(0, new Object[]{nombreProducto, tallaProducto, cantidad, precioUnitario, subtotal});
+        actualizarTotales();
+    }
 
-    // Actualizar totales después de agregar una nueva fila
-}
+    private void actualizarTotales() {
+        DefaultTableModel modelo = (DefaultTableModel) tablaCarrito.getModel();
+        double subtotalTotal = 0.0;
+
+        // Calcular el subtotal total sumando todos los valores de la columna "Subtotal"
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            double subtotal = (double) modelo.getValueAt(i, 4); // Columna de subtotal
+            subtotalTotal += subtotal;
+        }
+
+        // Calcular el IVA (15% del subtotal total)
+        double ivaTotal = subtotalTotal * 0.15;
+
+        // Actualizar los campos de subtotal e IVA
+        fieldSubtotal.setText(String.format("%.2f", subtotalTotal));
+        fieldIva.setText(String.format("%.2f", ivaTotal));
+
+        // Calcular el total (opcional, si deseas incluirlo también)
+        double total = subtotalTotal + ivaTotal;
+        fieldTotal.setText(String.format("%.2f", total));
+    }
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel btnAñadirMas;
+    private javax.swing.JLabel btnConfirmarMetodo;
     private javax.swing.JLabel btnFinalizarCompra;
+    private javax.swing.JComboBox<String> comboMetodo;
+    private javax.swing.JTextField fieldIva;
+    private javax.swing.JTextField fieldSubtotal;
+    private javax.swing.JTextField fieldTotal;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField3;
     private javax.swing.JLabel lblLogo;
     private javax.swing.JTable tablaCarrito;
     // End of variables declaration//GEN-END:variables

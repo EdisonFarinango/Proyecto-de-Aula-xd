@@ -172,10 +172,7 @@ public class Pantalones extends javax.swing.JFrame {
 
         tablaPantalones.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null},
-                {null, null, null, null, null}
+
             },
             new String [] {
                 "Nro.", "Producto", "Cantidad", "Talla", "Precio Unitario"
@@ -226,7 +223,7 @@ public class Pantalones extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(lblImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 340, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
@@ -249,9 +246,9 @@ public class Pantalones extends javax.swing.JFrame {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGap(14, 14, 14)
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 488, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -280,8 +277,8 @@ public class Pantalones extends javax.swing.JFrame {
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                                 .addComponent(jLabel4)
                                 .addGap(8, 8, 8)
-                                .addComponent(jLabel6)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                                .addComponent(jLabel6)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(lblImagen, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(111, 111, 111))
@@ -334,17 +331,18 @@ public class Pantalones extends javax.swing.JFrame {
                 int stockDisponible = ProductosCat.obtenerStockDisponible(productoSeleccionado, tallaSeleccionada);
 
                 javax.swing.table.DefaultTableModel modeloTabla = (javax.swing.table.DefaultTableModel) tablaPantalones.getModel();
-
-                // Verificar si el producto ya está en la tabla
                 boolean productoYaEnTabla = false;
                 int cantidadTotalEnTabla = 0;
+                int filaExistente = -1;
 
+                // Buscar si el producto ya está en la tabla
                 for (int i = 0; i < modeloTabla.getRowCount(); i++) {
                     String productoEnTabla = (String) modeloTabla.getValueAt(i, 1);
                     String tallaEnTabla = (String) modeloTabla.getValueAt(i, 3);
                     if (productoSeleccionado.equals(productoEnTabla) && tallaSeleccionada.equals(tallaEnTabla)) {
                         cantidadTotalEnTabla += (int) modeloTabla.getValueAt(i, 2);
                         productoYaEnTabla = true;
+                        filaExistente = i; // Guardar la fila existente para actualizar
                     }
                 }
 
@@ -354,13 +352,21 @@ public class Pantalones extends javax.swing.JFrame {
                 }
 
                 if (cantidadIngresada <= stockDisponible) {
-                    modeloTabla.insertRow(0, new Object[]{
-                        modeloTabla.getRowCount() + 1, // Nro.
-                        productoSeleccionado,
-                        cantidadIngresada,
-                        tallaSeleccionada,
-                        precio
-                    });
+                    if (productoYaEnTabla) {
+                        // Actualizar la cantidad en la fila existente
+                        int nuevaCantidad = cantidadTotalEnTabla + cantidadIngresada;
+                        modeloTabla.setValueAt(nuevaCantidad, filaExistente, 2); // Actualizar cantidad
+                    } else {
+                        // Insertar una nueva fila al principio
+                        modeloTabla.insertRow(0, new Object[]{
+                            modeloTabla.getRowCount() + 1, // Nro.
+                            productoSeleccionado,
+                            cantidadIngresada,
+                            tallaSeleccionada,
+                            precio
+                        });
+                    }
+                    actualizarNumerosFilas();
                     limpiarCampos();
                     ocultarImagen();
                 } else {
@@ -382,6 +388,14 @@ public class Pantalones extends javax.swing.JFrame {
                     javax.swing.JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnAñadirTablaMouseClicked
+
+    // Método para actualizar los números de las filas después de insertar o actualizar
+    private void actualizarNumerosFilas() {
+        javax.swing.table.DefaultTableModel modeloTabla = (javax.swing.table.DefaultTableModel) tablaPantalones.getModel();
+        for (int i = 0; i < modeloTabla.getRowCount(); i++) {
+            modeloTabla.setValueAt(i + 1, i, 0); // Actualizar el número de la fila
+        }
+    }
 
     private void ocultarImagen() {
         lblImagen.setIcon(null); // Elimina la imagen del JLabel
