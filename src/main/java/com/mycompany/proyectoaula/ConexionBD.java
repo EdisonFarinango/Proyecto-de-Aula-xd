@@ -20,11 +20,13 @@ public class ConexionBD {
         conectar();
     }
 
-    public void conectar() {
+     public void conectar() {
         try {
             if (conn == null || conn.isClosed()) {
                 conn = DriverManager.getConnection(URL, USUARIO, CLAVE);
                 System.out.println("Conexión Exitosa");
+            } else {
+                System.out.println("La conexión ya está abierta");
             }
         } catch (SQLException ex) {
             System.out.println("Error al abrir Conexión: " + ex.getMessage());
@@ -32,12 +34,14 @@ public class ConexionBD {
     }
 
     public void desconectar() {
-        if (conn != null) {
+        if (conn!= null) {
             try {
                 conn.close();
                 System.out.println("Conexión Cerrada");
             } catch (SQLException ex) {
                 Logger.getLogger(ConexionBD.class.getName()).log(Level.SEVERE, "Error al cerrar Conexión", ex);
+            } finally {
+                conn = null;
             }
         }
     }
@@ -50,7 +54,34 @@ public class ConexionBD {
             r = st.executeQuery(SQL);
         } catch (SQLException ex) {
             System.out.println("Error al ejecutar SQL: " + ex.getMessage());
+        } finally {
+            cerrarRecursos(st, r);
         }
         return r;
+    }
+
+    public void ejecutaUpdate(String SQL) throws SQLException {
+        Statement st = null;
+        try {
+            st = conn.createStatement();
+            st.executeUpdate(SQL);
+        } catch (SQLException ex) {
+            System.out.println("Error al ejecutar UPDATE: " + ex.getMessage());
+        } finally {
+            cerrarRecursos(st, null);
+        }
+    }
+
+    private void cerrarRecursos(Statement st, ResultSet r) {
+        try {
+            if (r!= null) {
+                r.close();
+            }
+            if (st!= null) {
+                st.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ConexionBD.class.getName()).log(Level.SEVERE, "Error al cerrar recursos", ex);
+        }
     }
 }
