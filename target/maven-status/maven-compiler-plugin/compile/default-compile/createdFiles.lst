@@ -5,8 +5,10 @@ com\mycompany\proyectoaula\Pantalones$3.class
 com\mycompany\proyectoaula\Carrito$2.class
 com\mycompany\proyectoaula\RegistrarUsuario.class
 com\mycompany\proyectoaula\Credito$2.class
+com\mycompany\proyectoaula\Zapatos$1.class
 com\mycompany\proyectoaula\ProductosCat.class
 com\mycompany\proyectoaula\RegistrarUsuario$5.class
+com\mycompany\proyectoaula\Zapatos$5.class
 com\mycompany\proyectoaula\RecuperacionContrasenia$2.class
 com\mycompany\proyectoaula\Pantalones$6.class
 com\mycompany\proyectoaula\RecuperacionContrasenia.class
@@ -15,6 +17,7 @@ com\mycompany\proyectoaula\Carrito$5.class
 com\mycompany\proyectoaula\Pantalones$2.class
 com\mycompany\proyectoaula\Producto.class
 com\mycompany\proyectoaula\Camisetas$4.class
+com\mycompany\proyectoaula\Zapatos$4.class
 com\mycompany\proyectoaula\Productos$3.class
 com\mycompany\proyectoaula\VentanaLogin$1.class
 com\mycompany\proyectoaula\Camisetas$7.class
@@ -26,6 +29,8 @@ com\mycompany\proyectoaula\RecuperacionContrasenia$1.class
 com\mycompany\proyectoaula\RegistrarUsuario$3.class
 com\mycompany\proyectoaula\Transferencia$1.class
 com\mycompany\proyectoaula\Carrito$1.class
+com\mycompany\proyectoaula\Zapatos$7.class
+com\mycompany\proyectoaula\Zapatos$3.class
 com\mycompany\proyectoaula\Pantalones$8.class
 com\mycompany\proyectoaula\Carrito$4.class
 com\mycompany\proyectoaula\RecuperacionContrasenia$4.class
@@ -34,8 +39,10 @@ com\mycompany\proyectoaula\Pantalones$1.class
 com\mycompany\proyectoaula\Transferencia$2.class
 com\mycompany\proyectoaula\VentanaLogin$7.class
 com\mycompany\proyectoaula\Camisetas.class
+com\mycompany\proyectoaula\Productos$4.class
 com\mycompany\proyectoaula\Productos$1.class
 com\mycompany\proyectoaula\Sesion.class
+com\mycompany\proyectoaula\Zapatos$6.class
 com\mycompany\proyectoaula\VentanaLogin$4.class
 com\mycompany\proyectoaula\Camisetas$5.class
 com\mycompany\proyectoaula\TableUtils.class
@@ -52,10 +59,12 @@ com\mycompany\proyectoaula\RegistrarUsuario$1.class
 com\mycompany\proyectoaula\Camisetas$6.class
 com\mycompany\proyectoaula\MetodoDePago.class
 com\mycompany\proyectoaula\UtilidadesImagen.class
+com\mycompany\proyectoaula\Zapatos.class
 com\mycompany\proyectoaula\Credito.class
 com\mycompany\proyectoaula\Pantalones$7.class
 com\mycompany\proyectoaula\RecuperacionContrasenia$3.class
 com\mycompany\proyectoaula\Transferencia.class
+com\mycompany\proyectoaula\Zapatos$2.class
 com\mycompany\proyectoaula\PreguntasSeguridad.class
 com\mycompany\proyectoaula\VentanaLogin.class
 com\mycompany\proyectoaula\Carrito.class

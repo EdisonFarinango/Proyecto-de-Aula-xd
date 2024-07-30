@@ -320,4 +320,35 @@ public class ProductosCat {
         }
     }
 
+    
+        public static void llenarComboProductosZapatos(JComboBox<String> comboBox) {
+        ConexionBD conexion = new ConexionBD();
+        ResultSet rs = null;
+
+        try {
+            // Llamar al procedimiento almacenado
+            CallableStatement stmt = conexion.conn.prepareCall("{call ObtenerZapatos()}");
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                // Suponiendo que 'pro_nombrePro' es una columna en la vista 'VistaPantalones'
+                String productoNombre = rs.getString("pro_nombrePro");
+                comboBox.addItem(productoNombre);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            conexion.desconectar();
+            // Cerrar ResultSet si es necesario
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    
 }
