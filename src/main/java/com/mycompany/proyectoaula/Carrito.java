@@ -1,7 +1,6 @@
 package com.mycompany.proyectoaula;
 
 import java.sql.CallableStatement;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,7 +12,6 @@ import javax.swing.table.DefaultTableModel;
 
 public class Carrito extends javax.swing.JFrame {
 
-    private MetodoDePago metodo;
     private boolean metodoConfirmado = false;
     private ConexionBD conexionBD;
 
@@ -81,7 +79,6 @@ public class Carrito extends javax.swing.JFrame {
         btnConfirmarMetodo = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
         btnAñadirMas = new javax.swing.JLabel();
-        btnDetalleFactura = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -347,14 +344,6 @@ public class Carrito extends javax.swing.JFrame {
 
         jPanel1.add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 80, 220, 40));
 
-        btnDetalleFactura.setText("INSERTAR DETALLE");
-        btnDetalleFactura.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnDetalleFacturaActionPerformed(evt);
-            }
-        });
-        jPanel1.add(btnDetalleFactura, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 70, 160, 50));
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -378,13 +367,17 @@ public class Carrito extends javax.swing.JFrame {
 
     private void btnFinalizarCompraMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnFinalizarCompraMouseClicked
         obtenerIDMetodoPago();
+        // Obtener el id de la factura (último id insertado)
         if (!metodoConfirmado) {
             // Mostrar mensaje de advertencia
             JOptionPane.showMessageDialog(null, "Primero debes confirmar el método de pago.", "Advertencia", JOptionPane.WARNING_MESSAGE);
         } else {
             // Lógica para finalizar la compra
             finalizarCompra();
+        int idFactura = obtenerUltimoIdFactura();
 
+            // Llamar al método para insertar los detalles de la factura
+            insertarDetallesFactura(idFactura);
             JOptionPane.showMessageDialog(null, "Compra Finalizada");
         }
 
@@ -507,34 +500,34 @@ public class Carrito extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_btnConfirmarMetodoMouseClicked
 
-    private void btnDetalleFacturaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDetalleFacturaActionPerformed
-        // Obtener el id de la factura (último id insertado)
-        int idFactura = obtenerUltimoIdFactura();
-
+    // Método para insertar detalles de la factura en la base de datos
+    private void insertarDetallesFactura(int idFactura) {
         // Iterar sobre todas las filas seleccionadas en la tabla Carrito
         for (int i = 0; i < tablaCarrito.getRowCount(); i++) {
             // Obtener el id del producto desde la tabla Carrito
             String nombreProducto = (String) tablaCarrito.getValueAt(i, 0); // columna "Producto"
             int idProducto = obtenerIdProducto(nombreProducto);
 
+            double PrecioUnitario = ((Number) tablaCarrito.getValueAt(i, 3)).doubleValue(); // Corregido
             // Obtener la cantidad del producto desde la tabla Carrito
             int cantidadProducto = (int) tablaCarrito.getValueAt(i, 2); // columna "Cantidad"
 
             // Insertar datos en la tabla FacturaDetalle
             ConexionBD conexion = new ConexionBD();
-            String sql = "INSERT INTO DetalleFactura (fk_fac_id, fk_pro_id, cantidad) VALUES (?,?,?)";
+            String sql = "INSERT INTO DetalleFactura (fk_fac_id, fk_pro_id, cantidad, precio_unitario) VALUES (?,?,?,?)";
             try {
                 PreparedStatement ps = conexion.conn.prepareStatement(sql);
                 ps.setInt(1, idFactura);
                 ps.setInt(2, idProducto);
                 ps.setInt(3, cantidadProducto);
+                ps.setDouble(4, PrecioUnitario); // Cambiado a setDouble
                 ps.executeUpdate();
                 System.out.println("Detalle de factura insertado correctamente");
             } catch (SQLException ex) {
                 System.out.println("Error al insertar detalle de factura: " + ex.getMessage());
             }
         }
-    }//GEN-LAST:event_btnDetalleFacturaActionPerformed
+    }
 
     private int obtenerIdProducto(String nombreProducto) {
         ConexionBD conexion = new ConexionBD();
@@ -649,7 +642,6 @@ public class Carrito extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel btnAñadirMas;
     private javax.swing.JLabel btnConfirmarMetodo;
-    private javax.swing.JButton btnDetalleFactura;
     private javax.swing.JLabel btnFinalizarCompra;
     private javax.swing.JComboBox<String> comboMetodo;
     private javax.swing.JTextField fieldIva;
