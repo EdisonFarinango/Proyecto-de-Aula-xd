@@ -13,7 +13,7 @@ public class ConexionBD {
 
     private static final String URL = "jdbc:mysql://localhost:3306/proyecto";
     private static final String USUARIO = "root";
-    private static final String CLAVE = "0980790317";
+    private static final String CLAVE = "9478";
     public Connection conn = null;
 
     public ConexionBD() {
