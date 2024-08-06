@@ -103,6 +103,8 @@ public class Pantalones extends javax.swing.JFrame {
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
+        comboProductos.setFont(new java.awt.Font("Roboto", 0, 18)); // NOI18N
+        comboProductos.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         comboProductos.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 comboProductosItemStateChanged(evt);
