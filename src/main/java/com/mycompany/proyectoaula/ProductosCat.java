@@ -7,9 +7,40 @@ package com.mycompany.proyectoaula;
 import java.sql.CallableStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JComboBox;
 
 public class ProductosCat {
+
+    public static List<String> obtenerTodosLosProductos() {
+        // Aquí obtienes la lista de productos desde la base de datos o una lista precargada
+        List<String> productos = new ArrayList<>();
+        ConexionBD conexion = new ConexionBD();
+        ResultSet rs = null;
+
+        try {
+            CallableStatement stmt = conexion.conn.prepareCall("{call ObtenerPantalones()}");
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                productos.add(rs.getString("pro_nombrePro"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            conexion.desconectar();
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return productos;
+    }
 
     public static void llenarComboProductos(JComboBox<String> comboBox) {
         ConexionBD conexion = new ConexionBD();
@@ -132,43 +163,7 @@ public class ProductosCat {
 
         return precio;
     }
-    
-    
-    
-    public static void incrementarStock(String producto, String talla, int cantidad) {
-        ConexionBD conexion = new ConexionBD();
-        CallableStatement stmt = null;
 
-        try {
-            // Preparar llamada al procedimiento almacenado
-            stmt = conexion.conn.prepareCall("{call IncrementarStock(?, ?, ?)}");
-            stmt.setString(1, producto);
-            stmt.setString(2, talla);
-            stmt.setInt(3, cantidad);
-
-            // Ejecutar el procedimiento
-            stmt.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (stmt != null) {
-                    stmt.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            conexion.desconectar();
-        }
-    }
-
-    
-    
-    
-    
-    
-    
-    
     public static void llenarComboCamisetas(JComboBox<String> comboBox) {
         ConexionBD conexion = new ConexionBD();
         ResultSet rs = null;
@@ -290,44 +285,14 @@ public class ProductosCat {
 
         return precio;
     }
-    
-    
-    
-    public static void incrementarStockCamisa(String producto, String talla, int cantidad) {
-        ConexionBD conexion = new ConexionBD();
-        CallableStatement stmt = null;
 
-        try {
-            // Preparar llamada al procedimiento almacenado
-            stmt = conexion.conn.prepareCall("{call IncrementarStock(?, ?, ?)}");
-            stmt.setString(1, producto);
-            stmt.setString(2, talla);
-            stmt.setInt(3, cantidad);
-
-            // Ejecutar el procedimiento
-            stmt.execute();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (stmt != null) {
-                    stmt.close();
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            conexion.desconectar();
-        }
-    }
-
-    
-        public static void llenarComboProductosZapatos(JComboBox<String> comboBox) {
+    public static void llenarComboProductosChaquetas(JComboBox<String> comboBox) {
         ConexionBD conexion = new ConexionBD();
         ResultSet rs = null;
 
         try {
             // Llamar al procedimiento almacenado
-            CallableStatement stmt = conexion.conn.prepareCall("{call ObtenerZapatos()}");
+            CallableStatement stmt = conexion.conn.prepareCall("{call ObtenerChaquetas()}");
             rs = stmt.executeQuery();
 
             while (rs.next()) {
@@ -350,5 +315,4 @@ public class ProductosCat {
         }
     }
 
-    
 }

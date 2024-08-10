@@ -105,7 +105,7 @@ public class Carrito extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(lblCedula, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(lblIDPago, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(lblIDPago, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(lblCedulaLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -119,13 +119,13 @@ public class Carrito extends javax.swing.JFrame {
                     .addComponent(jLabel1)))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(12, 12, 12)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                        .addComponent(lblCedula, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(lblCedulaLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(lblCedula, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addGap(2, 2, 2)
-                        .addComponent(lblIDPago, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(lblIDPago)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(lblCedulaLogin, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
@@ -374,11 +374,34 @@ public class Carrito extends javax.swing.JFrame {
         } else {
             // Lógica para finalizar la compra
             finalizarCompra();
-        int idFactura = obtenerUltimoIdFactura();
+            int idFactura = obtenerUltimoIdFactura();
 
             // Llamar al método para insertar los detalles de la factura
             insertarDetallesFactura(idFactura);
             JOptionPane.showMessageDialog(null, "Compra Finalizada");
+            // Obtener los valores de subtotal, IVA y total
+            double subtotal = parseDoubleWithComma(fieldSubtotal.getText());
+            double iva = parseDoubleWithComma(fieldIva.getText());
+            double total = parseDoubleWithComma(fieldTotal.getText());
+            String metodoPagoSeleccionado = (String) comboMetodo.getSelectedItem();
+
+            // Crear una instancia de la ventana de factura con los valores obtenidos
+            Factura fac = new Factura(idFactura, subtotal, iva, total, metodoPagoSeleccionado);
+
+            // Obtener el modelo de la tabla carrito
+            DefaultTableModel modeloCarrito = (DefaultTableModel) tablaCarrito.getModel();
+
+            // Define los índices de las columnas que quieres transferir
+            int[] indicesColumnas = {2, 0, 3, 4};  // Por ejemplo, Producto, Cantidad, Precio Unitario
+
+            // Define los nuevos nombres de columnas para la tabla factura
+            String[] nombresColumnas = {"Cantidad", "Producto", "Precio Unitario", "Subtotal"};
+
+            // Pasar los datos a la factura
+            fac.setDatosFactura(modeloCarrito, indicesColumnas, nombresColumnas);
+            fac.setVisible(true);
+            this.dispose();
+            CarritoData.clear();
         }
 
     }//GEN-LAST:event_btnFinalizarCompraMouseClicked
@@ -489,7 +512,7 @@ public class Carrito extends javax.swing.JFrame {
 
             // Cerrar la ventana actual (Carrito)
         }
-        if ("Tarjeta de Credito/Debito".equals(metodoSeleccionado)) {
+        if ("Tarjeta de Crédito".equals(metodoSeleccionado)) {
             // Crear una instancia de la ventana de Transferencia
             Credito ventanaTransferencia = new Credito();
             ventanaTransferencia.setVisible(true);
@@ -504,24 +527,27 @@ public class Carrito extends javax.swing.JFrame {
     private void insertarDetallesFactura(int idFactura) {
         // Iterar sobre todas las filas seleccionadas en la tabla Carrito
         for (int i = 0; i < tablaCarrito.getRowCount(); i++) {
-            // Obtener el id del producto desde la tabla Carrito
+            // Obtener el nombre del producto y la talla desde la tabla Carrito
             String nombreProducto = (String) tablaCarrito.getValueAt(i, 0); // columna "Producto"
-            int idProducto = obtenerIdProducto(nombreProducto);
+            String nombreTalla = (String) tablaCarrito.getValueAt(i, 1); // columna "Talla"
 
-            double PrecioUnitario = ((Number) tablaCarrito.getValueAt(i, 3)).doubleValue(); // Corregido
+            int idProductoTalla = obtenerIdProductoTalla(nombreProducto, nombreTalla);
+
+            double precioUnitario = ((Number) tablaCarrito.getValueAt(i, 3)).doubleValue(); // Corregido
             // Obtener la cantidad del producto desde la tabla Carrito
             int cantidadProducto = (int) tablaCarrito.getValueAt(i, 2); // columna "Cantidad"
 
-            // Insertar datos en la tabla FacturaDetalle
+            // Insertar datos en la tabla DetalleFactura usando el SP
             ConexionBD conexion = new ConexionBD();
-            String sql = "INSERT INTO DetalleFactura (fk_fac_id, fk_pro_id, cantidad, precio_unitario) VALUES (?,?,?,?)";
+            String sql = "{CALL DetalleFactura(?, NULL, ?, ?, ?, ?)}";
             try {
-                PreparedStatement ps = conexion.conn.prepareStatement(sql);
-                ps.setInt(1, idFactura);
-                ps.setInt(2, idProducto);
-                ps.setInt(3, cantidadProducto);
-                ps.setDouble(4, PrecioUnitario); // Cambiado a setDouble
-                ps.executeUpdate();
+                CallableStatement cs = conexion.conn.prepareCall(sql);
+                cs.setInt(1, 2); // Opción 2 para INSERT
+                cs.setInt(2, cantidadProducto);
+                cs.setDouble(3, precioUnitario);
+                cs.setInt(4, idFactura);
+                cs.setInt(5, idProductoTalla);
+                cs.executeUpdate();
                 System.out.println("Detalle de factura insertado correctamente");
             } catch (SQLException ex) {
                 System.out.println("Error al insertar detalle de factura: " + ex.getMessage());
@@ -529,20 +555,25 @@ public class Carrito extends javax.swing.JFrame {
         }
     }
 
-    private int obtenerIdProducto(String nombreProducto) {
+    private int obtenerIdProductoTalla(String nombreProducto, String nombreTalla) {
         ConexionBD conexion = new ConexionBD();
-        String sql = "SELECT pro_id FROM productos WHERE pro_nombrePro =?";
+        String sql = "SELECT pt.pro_talla_id "
+                + "FROM productostallas pt "
+                + "JOIN productos p ON pt.fk_pro_id = p.pro_id "
+                + "JOIN tallas t ON pt.fk_talla_id = t.talla_id "
+                + "WHERE p.pro_nombrePro = ? AND t.talla_nombre = ?";
         try {
             PreparedStatement ps = conexion.conn.prepareStatement(sql);
             ps.setString(1, nombreProducto);
+            ps.setString(2, nombreTalla);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                return rs.getInt("pro_id");
+                return rs.getInt("pro_talla_id");
             } else {
-                return -1; // no se encontró el producto
+                return -1; // No se encontró la combinación de producto y talla
             }
         } catch (SQLException ex) {
-            System.out.println("Error al obtener id de producto: " + ex.getMessage());
+            System.out.println("Error al obtener id de producto y talla: " + ex.getMessage());
             return -1;
         }
     }
@@ -562,11 +593,6 @@ public class Carrito extends javax.swing.JFrame {
             System.out.println("Error al obtener último id de factura: " + ex.getMessage());
             return -1;
         }
-    }
-
-    private int obtenerCantidadProducto(int filaSeleccionada) {
-        // obtener la cantidad del producto desde la tabla Carrito
-        return (int) tablaCarrito.getValueAt(filaSeleccionada, 2); // columna "Cantidad"
     }
 
     /**

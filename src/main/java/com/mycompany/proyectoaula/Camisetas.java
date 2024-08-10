@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
+import javax.swing.JSpinner;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -27,6 +28,8 @@ public class Camisetas extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(this);
         UtilidadesImagen.escalar(lblLogo, "C:/Users/USER/OneDrive/Escritorio/ProyectoAula/imgs/logo.jpg");
+        UtilidadesImagen.escalar(lblVolver, "C:/Users/USER/OneDrive/Escritorio/ProyectoAula/imgs/volver.png");
+
         conexion = new ConexionBD();
 
         ProductosCat.llenarComboCamisetas(comboProductos);
@@ -83,6 +86,7 @@ public class Camisetas extends javax.swing.JFrame {
         jPanel3 = new javax.swing.JPanel();
         lblLogo = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
+        lblVolver = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -95,12 +99,14 @@ public class Camisetas extends javax.swing.JFrame {
         btnMandarCarrito = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
-        lblImagen = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
         tablaPantalones = new javax.swing.JTable();
+        jPanel5 = new javax.swing.JPanel();
+        lblImagen = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         jPanel3.setBackground(new java.awt.Color(0, 0, 0));
@@ -108,59 +114,68 @@ public class Camisetas extends javax.swing.JFrame {
         jLabel5.setBackground(new java.awt.Color(255, 255, 255));
         jLabel5.setFont(new java.awt.Font("Roboto", 1, 48)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel5.setText("SELECCIONE SU PRODUCTO");
+        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel5.setText("COMPRAR CAMISAS");
+
+        lblVolver.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblVolver.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblVolverMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
+                .addGap(27, 27, 27)
+                .addComponent(lblVolver, javax.swing.GroupLayout.PREFERRED_SIZE, 63, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(30, 30, 30)
+                .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 592, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 68, Short.MAX_VALUE)
                 .addComponent(lblLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(57, 57, 57)
-                .addComponent(jLabel5)
-                .addContainerGap(152, Short.MAX_VALUE))
+                .addGap(63, 63, 63))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(lblLogo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addComponent(jLabel5)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(lblVolver, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(lblLogo, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
-        jPanel1.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, -1, -1));
+        jPanel1.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 900, -1));
 
         jLabel1.setFont(new java.awt.Font("Roboto Black", 0, 14)); // NOI18N
         jLabel1.setText("Seleccione Producto");
-        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 90, -1, -1));
+        jPanel1.add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 80, -1, -1));
 
         jLabel2.setFont(new java.awt.Font("Roboto Black", 0, 14)); // NOI18N
         jLabel2.setText("Eliga la cantidad:");
-        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 90, -1, -1));
+        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 150, -1, -1));
 
         jLabel3.setFont(new java.awt.Font("Roboto Black", 0, 14)); // NOI18N
         jLabel3.setText("Seleccione la talla:");
-        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 90, -1, -1));
+        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 150, -1, -1));
 
         comboProductos.addItemListener(new java.awt.event.ItemListener() {
             public void itemStateChanged(java.awt.event.ItemEvent evt) {
                 comboProductosItemStateChanged(evt);
             }
         });
-        jPanel1.add(comboProductos, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 110, 340, 32));
+        jPanel1.add(comboProductos, new org.netbeans.lib.awtextra.AbsoluteConstraints(19, 105, 340, 32));
 
         spinnerCantidad.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 spinnerCantidadStateChanged(evt);
             }
         });
-        jPanel1.add(spinnerCantidad, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 110, 110, 30));
+        jPanel1.add(spinnerCantidad, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 170, 110, 30));
 
-        jPanel1.add(comboTallas, new org.netbeans.lib.awtextra.AbsoluteConstraints(530, 110, 119, 32));
+        jPanel1.add(comboTallas, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 170, 119, 32));
 
         jPanel4.setBackground(new java.awt.Color(0, 0, 0));
 
@@ -168,6 +183,7 @@ public class Camisetas extends javax.swing.JFrame {
         btnAñadirTabla.setForeground(new java.awt.Color(255, 255, 255));
         btnAñadirTabla.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         btnAñadirTabla.setText("AÑADIR A LA LISTA");
+        btnAñadirTabla.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnAñadirTabla.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnAñadirTablaMouseClicked(evt);
@@ -185,7 +201,7 @@ public class Camisetas extends javax.swing.JFrame {
             .addComponent(btnAñadirTabla, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
-        jPanel1.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 110, 203, 32));
+        jPanel1.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 170, 203, 32));
 
         jPanel2.setBackground(new java.awt.Color(0, 0, 0));
 
@@ -193,6 +209,7 @@ public class Camisetas extends javax.swing.JFrame {
         btnMandarCarrito.setForeground(new java.awt.Color(255, 255, 255));
         btnMandarCarrito.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         btnMandarCarrito.setText("MANDAR AL CARRITO");
+        btnMandarCarrito.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
         btnMandarCarrito.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnMandarCarritoMouseClicked(evt);
@@ -210,18 +227,15 @@ public class Camisetas extends javax.swing.JFrame {
             .addComponent(btnMandarCarrito, javax.swing.GroupLayout.DEFAULT_SIZE, 32, Short.MAX_VALUE)
         );
 
-        jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(670, 150, -1, -1));
+        jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 210, -1, -1));
 
         jLabel4.setFont(new java.awt.Font("Roboto", 1, 24)); // NOI18N
         jLabel4.setText("Lista de productos");
-        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 190, -1, -1));
+        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 210, -1, -1));
 
         jLabel6.setForeground(new java.awt.Color(204, 0, 0));
         jLabel6.setText("Nota: Doble clic para eliminar de la lista*");
-        jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 220, -1, -1));
-
-        lblImagen.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
-        jPanel1.add(lblImagen, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 160, 340, 370));
+        jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 240, -1, -1));
 
         tablaPantalones.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -253,7 +267,30 @@ public class Camisetas extends javax.swing.JFrame {
         });
         jScrollPane3.setViewportView(tablaPantalones);
 
-        jPanel1.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(390, 240, 480, 290));
+        jPanel1.add(jScrollPane3, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 260, 480, 270));
+
+        jPanel5.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel5.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Imagen de Camisa", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Roboto Black", 0, 24))); // NOI18N
+
+        lblImagen.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lblImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 298, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addComponent(lblImagen, javax.swing.GroupLayout.PREFERRED_SIZE, 409, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 5, Short.MAX_VALUE))
+        );
+
+        jPanel1.add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(540, 80, 320, 450));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -284,7 +321,14 @@ public class Camisetas extends javax.swing.JFrame {
     }//GEN-LAST:event_comboProductosItemStateChanged
 
     private void spinnerCantidadStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spinnerCantidadStateChanged
+        JSpinner spinner = (JSpinner) evt.getSource(); // Obtener el spinner que ha disparado el evento
+        int valorActual = (Integer) spinner.getValue(); // Obtener el valor actual del spinner
 
+        // Validar el valor del spinner
+        if (valorActual < 0) {
+            // Si el valor es negativo, establecer el valor en 0
+            spinner.setValue(0);
+        }
         validarStock();
     }//GEN-LAST:event_spinnerCantidadStateChanged
 
@@ -410,17 +454,17 @@ public class Camisetas extends javax.swing.JFrame {
             int row = tablaPantalones.rowAtPoint(evt.getPoint());
             if (row >= 0) {
                 javax.swing.table.DefaultTableModel modeloTabla = (javax.swing.table.DefaultTableModel) tablaPantalones.getModel();
-                String productoEliminado = (String) modeloTabla.getValueAt(row, 1);
-                String tallaEliminada = (String) modeloTabla.getValueAt(row, 3);
-                int cantidadEliminada = (int) modeloTabla.getValueAt(row, 2);
-
-                // Incrementar stock
-                ProductosCat.incrementarStockCamisa(productoEliminado, tallaEliminada, cantidadEliminada);
 
                 modeloTabla.removeRow(row);
             }
         }
     }//GEN-LAST:event_tablaPantalonesMouseClicked
+
+    private void lblVolverMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblVolverMouseClicked
+        Productos pro = new Productos();
+        pro.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_lblVolverMouseClicked
 
     /**
      * @param args the command line arguments
@@ -486,6 +530,8 @@ public class Camisetas extends javax.swing.JFrame {
             int stockDisponible = ProductosCat.obtenerStockDisponibleCamisas(productoSeleccionado, tallaSeleccionada);
 
             if (cantidadIngresada > stockDisponible) {
+                spinnerCantidad.setValue(stockDisponible);
+
                 javax.swing.JOptionPane.showMessageDialog(this,
                         "La cantidad ingresada excede el stock disponible. Stock disponible: " + stockDisponible,
                         "Error de stock",
@@ -516,9 +562,11 @@ public class Camisetas extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JLabel lblImagen;
     private javax.swing.JLabel lblLogo;
+    private javax.swing.JLabel lblVolver;
     private javax.swing.JSpinner spinnerCantidad;
     private javax.swing.JTable tablaPantalones;
     // End of variables declaration//GEN-END:variables
