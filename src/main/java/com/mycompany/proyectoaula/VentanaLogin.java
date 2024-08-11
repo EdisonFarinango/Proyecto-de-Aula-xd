@@ -292,6 +292,13 @@ public class VentanaLogin extends javax.swing.JFrame {
                 // Mensaje de éxito
                 System.out.println("Inicio de sesión exitoso");
 
+                // Inserta un registro en la tabla login_logs
+                String insertLog = "INSERT INTO login_logs (usu_cedula) VALUES (?)";
+                PreparedStatement psLog = conexion.conn.prepareStatement(insertLog);
+                psLog.setString(1, cedula);
+                psLog.executeUpdate();
+                psLog.close();
+
                 // Abre la ventana correspondiente según el usuario
                 if (usuario.equals("admin") && contrasenia.equals("admin")) {
                     MenuAdmin ventanaRegistro = new MenuAdmin();

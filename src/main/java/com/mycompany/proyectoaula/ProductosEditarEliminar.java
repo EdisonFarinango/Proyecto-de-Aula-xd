@@ -22,12 +22,14 @@ public class ProductosEditarEliminar extends javax.swing.JFrame {
         UtilidadesImagen.escalar(lblLogo, "C:/Users/USER/OneDrive/Escritorio/ProyectoAula/imgs/logo.jpg");
         UtilidadesImagen.escalar(lblVolver, "C:/Users/USER/OneDrive/Escritorio/ProyectoAula/imgs/volver.png");
         cargarCategorias();
-
+        cmbCategoria.setSelectedIndex(-1);
+        comboProducto.setSelectedIndex(-1);
         // Agregar ActionListener al JComboBox de categorías
         cmbCategoria.addActionListener(evt -> cargarProductosPorCategoria());
 
         // Agregar ActionListener al JComboBox de productos
         comboProducto.addActionListener(evt -> cargarDetallesProducto());
+
     }
 
     private void cargarCategorias() {
@@ -429,9 +431,9 @@ public class ProductosEditarEliminar extends javax.swing.JFrame {
                 stmt.executeUpdate();
 
                 JOptionPane.showMessageDialog(this, "Producto actualizado con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-
                 // Opcional: Actualiza la tabla después de la actualización
                 cargarDetallesProducto();
+                limpiarCampo();
 
             } catch (SQLException ex) {
                 ex.printStackTrace();
@@ -468,9 +470,10 @@ public class ProductosEditarEliminar extends javax.swing.JFrame {
                 stmt.executeUpdate();
 
                 JOptionPane.showMessageDialog(this, "Producto eliminado con éxito.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
-
                 // Opcional: Actualiza la tabla o vista después de la eliminación
                 cargarDetallesProducto();
+
+                limpiarCampo();
 
             } catch (SQLException ex) {
                 ex.printStackTrace();
@@ -497,6 +500,17 @@ public class ProductosEditarEliminar extends javax.swing.JFrame {
                 new ProductosEditarEliminar().setVisible(true);
             }
         });
+    }
+
+    private void limpiarCampo() {
+        cmbCategoria.setSelectedIndex(-1);
+        comboProducto.setSelectedIndex(-1);
+        txtPrecioActual.setText("");
+        txtPrecioNuevo.setText("");
+        txtTallaActual.setText("");
+        lblNombreProducto.setText("");
+        txtStockActual.setText("");
+        spnStockNuevo.setValue(0);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

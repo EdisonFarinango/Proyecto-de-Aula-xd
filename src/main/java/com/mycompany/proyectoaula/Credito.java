@@ -177,10 +177,37 @@ public class Credito extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnPagarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnPagarMouseClicked
-        if (camposEstanLlenos()){
-            JOptionPane.showMessageDialog(this, "Pago realizado con éxito", "Confirmación", JOptionPane.INFORMATION_MESSAGE); 
-        this.dispose();
-       } else {
+        if (camposEstanLlenos()) {
+            String numeroTarjeta = fieldNumero.getText().replaceAll("\\s+", ""); // Elimina espacios
+            String fecha = fieldFecha.getText();
+            String codigo = fieldCodigo.getText();
+
+            StringBuilder errores = new StringBuilder();
+
+            // Validar número de tarjeta
+            if (!validarNumeroTarjeta(numeroTarjeta)) {
+                errores.append("Número de tarjeta inválido.\n");
+            }
+
+            // Validar fecha (Formato MM/AA)
+            if (!fecha.matches("\\d{2}/\\d{2}")) {
+                errores.append("Fecha de expiración inválida. El formato debe ser MM/AA.\n");
+            }
+
+            // Validar código de seguridad
+            if (codigo.length() != 3) {
+                errores.append("Código de seguridad inválido. Debe tener 3 dígitos.\n");
+            }
+
+            // Mostrar errores si hay alguno
+            if (errores.length() > 0) {
+                JOptionPane.showMessageDialog(this, errores.toString(), "Errores", JOptionPane.ERROR_MESSAGE);
+            } else {
+                // Si todo es válido
+                JOptionPane.showMessageDialog(this, "Pago realizado con éxito", "Confirmación", JOptionPane.INFORMATION_MESSAGE);
+                this.dispose();
+            }
+        } else {
             JOptionPane.showMessageDialog(this, "Por favor, complete todos los campos para realizar el pago.");
         }
     }//GEN-LAST:event_btnPagarMouseClicked
@@ -220,12 +247,28 @@ public class Credito extends javax.swing.JFrame {
         });
     }
 
-    
-        private boolean camposEstanLlenos() {
+    private boolean camposEstanLlenos() {
         return !fieldNombre.getText().trim().isEmpty()
                 && !fieldNumero.getText().trim().isEmpty()
                 && !fieldCodigo.getText().trim().isEmpty()
                 && !fieldFecha.getText().trim().isEmpty();
+    }
+
+    public static boolean validarNumeroTarjeta(String numeroTarjeta) {
+        int suma = 0;
+        boolean esPar = false;
+        for (int i = numeroTarjeta.length() - 1; i >= 0; i--) {
+            int digito = Character.getNumericValue(numeroTarjeta.charAt(i));
+            if (esPar) {
+                digito *= 2;
+                if (digito > 9) {
+                    digito -= 9;
+                }
+            }
+            suma += digito;
+            esPar = !esPar;
+        }
+        return (suma % 10 == 0);
     }
 
 

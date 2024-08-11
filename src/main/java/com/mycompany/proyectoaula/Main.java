@@ -11,7 +11,7 @@ package com.mycompany.proyectoaula;
 public class Main {
 
     public static void main(String[] args) {
-        ProductosEditarEliminar ini = new ProductosEditarEliminar();
+        VentanaLogin ini = new VentanaLogin();
         ini.setVisible(true);
     }
 

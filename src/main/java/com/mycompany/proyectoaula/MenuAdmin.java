@@ -12,6 +12,8 @@ public class MenuAdmin extends javax.swing.JFrame {
 
     InsertarProductos ins = new InsertarProductos();
     ProductosEditarEliminar edel = new ProductosEditarEliminar();
+    Envios env = new Envios();
+    Reportes rep = new Reportes();
 
     public MenuAdmin() {
         initComponents();
@@ -19,6 +21,8 @@ public class MenuAdmin extends javax.swing.JFrame {
         UtilidadesImagen.escalar(lblVolver, "C:/Users/USER/OneDrive/Escritorio/ProyectoAula/imgs/salir.png");
         UtilidadesImagen.escalar(lblPro, "C:/Users/USER/OneDrive/Escritorio/ProyectoAula/imgs/prod.png");
         UtilidadesImagen.escalar(lblEditar, "C:/Users/USER/OneDrive/Escritorio/ProyectoAula/imgs/editar.png");
+        UtilidadesImagen.escalar(lblEnvio, "C:/Users/USER/OneDrive/Escritorio/ProyectoAula/imgs/envios.png");
+        UtilidadesImagen.escalar(lblReportes, "C:/Users/USER/OneDrive/Escritorio/ProyectoAula/imgs/reportes.png");
 
     }
 
@@ -42,6 +46,12 @@ public class MenuAdmin extends javax.swing.JFrame {
         jPanel4 = new javax.swing.JPanel();
         lblEditar = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
+        jPanel5 = new javax.swing.JPanel();
+        lblEnvio = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        jPanel6 = new javax.swing.JPanel();
+        lblReportes = new javax.swing.JLabel();
+        jLabel5 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -113,7 +123,7 @@ public class MenuAdmin extends javax.swing.JFrame {
             .addComponent(lblPro, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
         );
 
-        jPanel1.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 90, 200, 200));
+        jPanel1.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 80, 200, 200));
 
         jLabel2.setFont(new java.awt.Font("Roboto Black", 0, 18)); // NOI18N
         jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -124,7 +134,7 @@ public class MenuAdmin extends javax.swing.JFrame {
                 jLabel2MouseClicked(evt);
             }
         });
-        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 300, 200, 30));
+        jPanel1.add(jLabel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 290, 200, 30));
 
         jPanel4.setBackground(new java.awt.Color(0, 0, 0));
 
@@ -146,7 +156,7 @@ public class MenuAdmin extends javax.swing.JFrame {
             .addComponent(lblEditar, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
         );
 
-        jPanel1.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(310, 90, 200, 200));
+        jPanel1.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(340, 80, 200, 200));
 
         jLabel3.setFont(new java.awt.Font("Roboto Black", 0, 18)); // NOI18N
         jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
@@ -157,9 +167,75 @@ public class MenuAdmin extends javax.swing.JFrame {
                 jLabel3MouseClicked(evt);
             }
         });
-        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(300, 300, 220, 30));
+        jPanel1.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(330, 290, 220, 30));
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 870, 540));
+        jPanel5.setBackground(new java.awt.Color(0, 0, 0));
+
+        lblEnvio.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblEnvio.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblEnvioMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
+        jPanel5.setLayout(jPanel5Layout);
+        jPanel5Layout.setHorizontalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(lblEnvio, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+        );
+        jPanel5Layout.setVerticalGroup(
+            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(lblEnvio, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+        );
+
+        jPanel1.add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(600, 80, 200, 200));
+
+        jLabel4.setFont(new java.awt.Font("Roboto Black", 0, 18)); // NOI18N
+        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel4.setText("AUTORIZAR ENVÍOS");
+        jLabel4.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel4.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel4MouseClicked(evt);
+            }
+        });
+        jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(590, 290, 230, 30));
+
+        jPanel6.setBackground(new java.awt.Color(0, 0, 0));
+
+        lblReportes.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblReportes.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblReportesMouseClicked(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(lblReportes, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+        );
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(lblReportes, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+        );
+
+        jPanel1.add(jPanel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 320, 200, 200));
+
+        jLabel5.setFont(new java.awt.Font("Roboto Black", 0, 18)); // NOI18N
+        jLabel5.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        jLabel5.setText("Ver Reportes");
+        jLabel5.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        jLabel5.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jLabel5MouseClicked(evt);
+            }
+        });
+        jPanel1.add(jLabel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(90, 530, 200, 30));
+
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 870, 580));
 
         pack();
         setLocationRelativeTo(null);
@@ -190,6 +266,29 @@ public class MenuAdmin extends javax.swing.JFrame {
         edel.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jLabel3MouseClicked
+
+    private void jLabel4MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel4MouseClicked
+        env.setVisible(true);
+        this.dispose();
+
+    }//GEN-LAST:event_jLabel4MouseClicked
+
+    private void lblEnvioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblEnvioMouseClicked
+        env.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_lblEnvioMouseClicked
+
+    private void lblReportesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblReportesMouseClicked
+        rep.setVisible(true);
+        this.dispose();
+
+
+    }//GEN-LAST:event_lblReportesMouseClicked
+
+    private void jLabel5MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jLabel5MouseClicked
+        rep.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_jLabel5MouseClicked
 
     /**
      * @param args the command line arguments
@@ -230,13 +329,19 @@ public class MenuAdmin extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
     private javax.swing.JLabel lblEditar;
+    private javax.swing.JLabel lblEnvio;
     private javax.swing.JLabel lblLogo;
     private javax.swing.JLabel lblPro;
+    private javax.swing.JLabel lblReportes;
     private javax.swing.JLabel lblVolver;
     // End of variables declaration//GEN-END:variables
 }

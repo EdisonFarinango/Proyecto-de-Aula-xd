@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
- */
 package com.mycompany.proyectoaula;
 // actualizacion
 
@@ -17,15 +13,17 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JSpinner;
+import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 
-/**
- *
- * @author USER
- */
 public class InsertarProductos extends javax.swing.JFrame {
 
     private ConexionBD conexionBD;
@@ -37,18 +35,38 @@ public class InsertarProductos extends javax.swing.JFrame {
         initComponents();
         conexionBD = new ConexionBD(); // Inicializamos la conexión
         cargarCategorias();
-        cargarTallas();
-        cmbTallas.setSelectedIndex(-1);
         txtTallasSeleccionadas.setText("");
         cmbTallas.setEnabled(true);
         btnAgregarStock.setEnabled(false);
         btnAgregarPrecio.setEnabled(false);
         UtilidadesImagen.escalar(lblLogo, "C:/Users/USER/OneDrive/Escritorio/ProyectoAula/imgs/logo.jpg");
         UtilidadesImagen.escalar(lblVolver, "C:/Users/USER/OneDrive/Escritorio/ProyectoAula/imgs/volver.png");
+        UtilidadesImagen.escalar(lblBuscar, "C:/Users/USER/OneDrive/Escritorio/ProyectoAula/imgs/buscar.png");
+        tabla();
+        btnInsertar.setEnabled(false);
+        btnInsertarTallaNueva.setEnabled(false);
+        cargarTallas();
+        cmbCategoria.setSelectedIndex(-1);
+        cmbTallas.setSelectedIndex(-1);
+        txtTallasSeleccionadas.setText("");
 
+        // deshabilitar todo
+        cmbCategoria.setEnabled(false);
+        cmbTallas.setEnabled(false);
+        txtTallasSeleccionadas.setEnabled(false);
+        txtPrecio.setEnabled(false);
+        txtPreciosSeleccionados.setEnabled(false);
+        spnStock.setEnabled(false);
+        txtStockSeleccionado.setEnabled(false);
     }
 
-    // Método para cargar categorías en el JComboBox
+    private void tabla() {
+        ((DefaultTableCellRenderer) tablaPro.getTableHeader().getDefaultRenderer())
+                .setHorizontalAlignment(SwingConstants.CENTER);
+
+        tablaPro.getTableHeader().setReorderingAllowed(false);
+    }
+
     private void cargarCategorias() {
         Connection connection = null;
         PreparedStatement stmt = null;
@@ -157,7 +175,10 @@ public class InsertarProductos extends javax.swing.JFrame {
         jSeparator7 = new javax.swing.JSeparator();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tablaPro = new javax.swing.JTable();
+        btnInsertarTallaNueva = new javax.swing.JButton();
+        lblBuscar = new javax.swing.JLabel();
+        btnLimpiarCampos = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -248,7 +269,7 @@ public class InsertarProductos extends javax.swing.JFrame {
         jPanel1.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 270, -1, -1));
 
         txtNombreProducto.setBorder(null);
-        jPanel1.add(txtNombreProducto, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 100, 300, 30));
+        jPanel1.add(txtNombreProducto, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 100, 240, 30));
 
         txtPreciosSeleccionados.setEditable(false);
         txtPreciosSeleccionados.setBorder(null);
@@ -295,27 +316,27 @@ public class InsertarProductos extends javax.swing.JFrame {
 
         txtCarpetaDestino.setEditable(false);
         txtCarpetaDestino.setBorder(null);
-        jPanel1.add(txtCarpetaDestino, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 470, 250, 30));
+        jPanel1.add(txtCarpetaDestino, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 530, 300, 30));
 
         jLabel6.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         jLabel6.setText("Carpeta Destino:");
-        jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 450, -1, -1));
+        jPanel1.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 510, 150, -1));
 
         lblImagen.setFont(new java.awt.Font("Roboto Black", 0, 24)); // NOI18N
         lblImagen.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Imagen del producto", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Roboto", 1, 14))); // NOI18N
-        jPanel1.add(lblImagen, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 100, 250, 270));
+        jPanel1.add(lblImagen, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 260, 250, 270));
 
         btnInsertar.setBackground(new java.awt.Color(0, 0, 0));
         btnInsertar.setFont(new java.awt.Font("Roboto", 0, 18)); // NOI18N
         btnInsertar.setForeground(new java.awt.Color(255, 255, 255));
-        btnInsertar.setText("Insertar Producto");
+        btnInsertar.setText("Insertar Producto Nuevo");
         btnInsertar.setBorder(null);
         btnInsertar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnInsertarActionPerformed(evt);
             }
         });
-        jPanel1.add(btnInsertar, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 380, 250, 40));
+        jPanel1.add(btnInsertar, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 100, 250, 40));
 
         btnAgregarStock.setBackground(new java.awt.Color(0, 0, 0));
         btnAgregarStock.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
@@ -332,45 +353,85 @@ public class InsertarProductos extends javax.swing.JFrame {
         txtStockSeleccionado.setEditable(false);
         txtStockSeleccionado.setBorder(null);
         jPanel1.add(txtStockSeleccionado, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 430, 300, 30));
-        jPanel1.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 130, 300, -1));
+        jPanel1.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 130, 240, -1));
         jPanel1.add(jSeparator2, new org.netbeans.lib.awtextra.AbsoluteConstraints(160, 500, 160, 10));
         jPanel1.add(jSeparator3, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 260, 120, -1));
         jPanel1.add(jSeparator4, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 320, 170, 10));
         jPanel1.add(jSeparator5, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 360, 300, 10));
         jPanel1.add(jSeparator6, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 460, 300, 10));
-        jPanel1.add(jSeparator7, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 500, 250, 10));
+        jPanel1.add(jSeparator7, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 560, 300, 10));
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
         jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Lista de Productos y Tallas", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Roboto Black", 0, 24))); // NOI18N
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tablaPro.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
             },
             new String [] {
-                "Producto", "Talla"
+                "stock", "nombre", "talla", "precio", "categoria"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false
+                false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
-        if (jTable1.getColumnModel().getColumnCount() > 0) {
-            jTable1.getColumnModel().getColumn(0).setResizable(false);
-            jTable1.getColumnModel().getColumn(1).setResizable(false);
+        jScrollPane1.setViewportView(tablaPro);
+        if (tablaPro.getColumnModel().getColumnCount() > 0) {
+            tablaPro.getColumnModel().getColumn(0).setResizable(false);
+            tablaPro.getColumnModel().getColumn(0).setPreferredWidth(0);
+            tablaPro.getColumnModel().getColumn(1).setResizable(false);
+            tablaPro.getColumnModel().getColumn(1).setPreferredWidth(100);
+            tablaPro.getColumnModel().getColumn(2).setResizable(false);
+            tablaPro.getColumnModel().getColumn(2).setPreferredWidth(100);
+            tablaPro.getColumnModel().getColumn(3).setResizable(false);
+            tablaPro.getColumnModel().getColumn(3).setPreferredWidth(100);
+            tablaPro.getColumnModel().getColumn(4).setResizable(false);
+            tablaPro.getColumnModel().getColumn(4).setPreferredWidth(0);
         }
 
         jPanel3.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 360, 400));
 
         jPanel1.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 80, 380, 450));
 
-        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1000, 540));
+        btnInsertarTallaNueva.setBackground(new java.awt.Color(0, 0, 0));
+        btnInsertarTallaNueva.setFont(new java.awt.Font("Roboto", 0, 18)); // NOI18N
+        btnInsertarTallaNueva.setForeground(new java.awt.Color(255, 255, 255));
+        btnInsertarTallaNueva.setText("Insertar Talla Nueva");
+        btnInsertarTallaNueva.setBorder(null);
+        btnInsertarTallaNueva.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnInsertarTallaNuevaActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnInsertarTallaNueva, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 150, 250, 40));
+
+        lblBuscar.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblBuscar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblBuscarMouseClicked(evt);
+            }
+        });
+        jPanel1.add(lblBuscar, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 100, 40, 40));
+
+        btnLimpiarCampos.setBackground(new java.awt.Color(0, 0, 0));
+        btnLimpiarCampos.setFont(new java.awt.Font("Roboto", 0, 18)); // NOI18N
+        btnLimpiarCampos.setForeground(new java.awt.Color(255, 255, 255));
+        btnLimpiarCampos.setText("Limpiar Campos");
+        btnLimpiarCampos.setBorder(null);
+        btnLimpiarCampos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLimpiarCamposActionPerformed(evt);
+            }
+        });
+        jPanel1.add(btnLimpiarCampos, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 200, 250, 40));
+
+        getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1000, 570));
 
         pack();
         setLocationRelativeTo(null);
@@ -401,12 +462,14 @@ public class InsertarProductos extends javax.swing.JFrame {
         actualizarTallasSeleccionadas();
         if (cmbTallas.getSelectedItem() != null) {
             btnAgregarPrecio.setEnabled(true);
-            cmbTallas.setEnabled(false); // Deshabilitar el combobox
+//            cmbTallas.setEnabled(false); // Deshabilitar el combobox
         }
     }//GEN-LAST:event_cmbTallasActionPerformed
 
     private void btnInsertarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInsertarActionPerformed
         insertarProducto();
+        limpiarCampos();
+
     }//GEN-LAST:event_btnInsertarActionPerformed
 
     private void spnStockStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spnStockStateChanged
@@ -438,6 +501,259 @@ public class InsertarProductos extends javax.swing.JFrame {
         this.dispose();
 
     }//GEN-LAST:event_lblVolverMouseClicked
+
+    private void btnInsertarTallaNuevaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInsertarTallaNuevaActionPerformed
+        Connection connection = null;
+        PreparedStatement stmt = null;
+
+        try {
+            // Obtener los valores de los campos de entrada
+            String nombreProducto = txtNombreProducto.getText(); // Asegúrate de tener un JTextField con este nombre
+            String tallas = txtTallasSeleccionadas.getText(); // Asegúrate de tener un JTextField con este nombre
+            String stocks = txtStockSeleccionado.getText(); // Asegúrate de tener un JTextField con este nombre
+            String precios = txtPreciosSeleccionados.getText(); // Asegúrate de tener un JTextField con este nombre
+
+            // Validar entradas
+            if (nombreProducto == null || nombreProducto.isEmpty()
+                    || tallas == null || tallas.isEmpty()
+                    || stocks == null || stocks.isEmpty()
+                    || precios == null || precios.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Por favor ingrese todos los datos.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            // Obtener la conexión
+            connection = conexionBD.conn; // Asegúrate de que `conexionBD.conn` esté correctamente configurado
+
+            // Preparar la llamada al procedimiento almacenado
+            stmt = connection.prepareCall("{CALL AgregarTallasAProductoExistente(?, ?, ?, ?)}");
+            stmt.setString(1, nombreProducto);
+            stmt.setString(2, tallas);
+            stmt.setString(3, stocks);
+            stmt.setString(4, precios);
+
+            // Ejecutar el procedimiento almacenado
+            stmt.executeUpdate();
+
+            // Mostrar mensaje de éxito
+            JOptionPane.showMessageDialog(this, "Tallas agregadas al producto exitosamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+            limpiarCampos();
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error al agregar las tallas al producto: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+        } finally {
+            // Cerrar los recursos sin cerrar la conexión
+            try {
+                if (stmt != null) {
+                    stmt.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+    }//GEN-LAST:event_btnInsertarTallaNuevaActionPerformed
+
+    private void limpiarCampos() {
+
+        // Obtener el modelo de la tabla y limpiar sus datos
+        DefaultTableModel model = (DefaultTableModel) tablaPro.getModel();
+        model.setRowCount(0); // Limpiar la tabla
+        txtNombreProducto.setText("");
+        cmbCategoria.setSelectedIndex(-1);
+        cmbTallas.setSelectedIndex(-1);
+        txtTallasSeleccionadas.setText("");
+        txtPrecio.setText("");
+        txtPreciosSeleccionados.setText("");
+        spnStock.setValue(0);
+        txtStockSeleccionado.setText("");
+        lblImagen.setIcon(null);
+    }
+
+    private void lblBuscarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblBuscarMouseClicked
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        String nombreProducto = txtNombreProducto.getText();
+
+        if (nombreProducto != null && !nombreProducto.isEmpty()) {
+            try {
+                connection = conexionBD.conn; // Obtén la conexión desde ConexionBD
+
+                // 1. Ejecutar el procedimiento almacenado para obtener los detalles del producto
+                stmt = connection.prepareCall("{call ObtenerDetallesProducto(?)}");
+                stmt.setString(1, nombreProducto);
+                rs = stmt.executeQuery();
+
+                // Obtener el modelo de la tabla
+                DefaultTableModel model = (DefaultTableModel) tablaPro.getModel();
+                model.setRowCount(0); // Limpiar la tabla antes de insertar nuevos datos
+
+                // Verificar si hay resultados
+                if (!rs.isBeforeFirst()) {
+                    // Si no hay resultados, mostrar un mensaje y limpiar los elementos del JComboBox
+                    JOptionPane.showMessageDialog(this, "Producto no encontrado.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                    btnInsertar.setEnabled(true);
+                    btnInsertarTallaNueva.setEnabled(false);
+                    cmbTallas.removeAllItems();
+                    cargarTallas();
+                    cmbCategoria.setEnabled(true);
+                    cmbTallas.setSelectedIndex(-1);
+                    cmbCategoria.setSelectedIndex(-1);
+                    txtTallasSeleccionadas.setText("");
+                    btnSeleccionarImagen.setEnabled(true);
+
+                    cmbTallas.setEnabled(true);
+                    txtTallasSeleccionadas.setEnabled(true);
+                    txtPrecio.setEnabled(true);
+                    txtPreciosSeleccionados.setEnabled(true);
+                    spnStock.setEnabled(true);
+                    txtStockSeleccionado.setEnabled(true);
+                    lblImagen.setIcon(null);
+                } else {
+                    // Recorrer los resultados y añadirlos a la tabla
+                    while (rs.next()) {
+                        String categoria = rs.getString("nombre_producto");
+                        String nombre = rs.getString("categoria");
+                        String talla = rs.getString("talla");
+                        double precio = rs.getDouble("precio");
+                        int stock = rs.getInt("stock");
+
+                        model.addRow(new Object[]{nombre, categoria, talla, precio, stock});
+                        cmbCategoria.setSelectedItem(nombre); // Asignar la categoría al JComboBox
+                    }
+
+                    // 2. Actualizar el JComboBox con las tallas que no pertenecen al producto encontrado
+                    // Primero, cerramos el ResultSet y PreparedStatement para la primera consulta
+                    rs.close();
+                    stmt.close();
+
+                    // Consulta para obtener las tallas que no pertenecen al producto buscado
+                    String query = "SELECT t.talla_nombre "
+                            + "FROM tallas t "
+                            + "WHERE t.talla_nombre NOT IN ("
+                            + "    SELECT ta.talla_nombre "
+                            + "    FROM productostallas pt "
+                            + "    JOIN tallas ta ON pt.fk_talla_id = ta.talla_id "
+                            + "    JOIN productos p ON pt.fk_pro_id = p.pro_id "
+                            + "    WHERE p.pro_nombrePro = ?"
+                            + ")";
+
+                    stmt = connection.prepareStatement(query);
+                    stmt.setString(1, nombreProducto);
+                    rs = stmt.executeQuery();
+
+                    // Actualizar el JComboBox con las tallas
+                    cmbTallas.removeAllItems();
+                    while (rs.next()) {
+                        String talla = rs.getString("talla_nombre");
+                        cmbTallas.addItem(talla);
+                    }
+
+                    cmbTallas.setEnabled(true);
+                    txtTallasSeleccionadas.setText("");
+                    btnInsertarTallaNueva.setEnabled(true);
+                    btnInsertar.setEnabled(false);
+                    cmbCategoria.setEnabled(false);
+                    cmbTallas.setSelectedIndex(-1);
+
+                    cmbTallas.setEnabled(true);
+                    txtTallasSeleccionadas.setEnabled(true);
+                    txtPrecio.setEnabled(true);
+                    txtPreciosSeleccionados.setEnabled(true);
+                    spnStock.setEnabled(true);
+                    txtStockSeleccionado.setEnabled(true);
+                    btnSeleccionarImagen.setEnabled(false);
+
+                    // Mostrar la imagen después de haber actualizado la categoría y las tallas
+                    mostrarImagen();
+                }
+
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Error al obtener los detalles del producto: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            } catch (IOException ex) {
+                Logger.getLogger(InsertarProductos.class.getName()).log(Level.SEVERE, null, ex);
+            } finally {
+                // Cierra los recursos sin cerrar la conexión
+                try {
+                    if (rs != null) {
+                        rs.close();
+                    }
+                    if (stmt != null) {
+                        stmt.close();
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Por favor ingrese el nombre del producto.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+        }
+    }//GEN-LAST:event_lblBuscarMouseClicked
+
+    private void btnLimpiarCamposActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarCamposActionPerformed
+        limpiarCampos();
+        cmbCategoria.setEnabled(false);
+        cmbTallas.setEnabled(false);
+        txtTallasSeleccionadas.setEnabled(false);
+        txtPrecio.setEnabled(false);
+        txtPreciosSeleccionados.setEnabled(false);
+        spnStock.setEnabled(false);
+        txtStockSeleccionado.setEnabled(false);
+        btnInsertar.setEnabled(false);
+        btnInsertarTallaNueva.setEnabled(false);
+
+    }//GEN-LAST:event_btnLimpiarCamposActionPerformed
+
+    private void mostrarImagen() throws IOException {
+        String productoSeleccionado = txtNombreProducto.getText();
+        String categoriaSeleccionada = (String) cmbCategoria.getSelectedItem();
+
+        if (productoSeleccionado != null && categoriaSeleccionada != null) {
+            // Transformar el nombre del producto para coincidir con el nombre del archivo de imagen
+            String imageName = productoSeleccionado.toLowerCase().replace(" ", "_");
+            String[] formatos = {".jpg", ".jpeg", ".png"};
+            String imagePath = "";
+
+            // Determinar la ruta de la imagen según la categoría
+            switch (categoriaSeleccionada.toLowerCase()) {
+                case "pantalones":
+                    imagePath = "C:/Users/USER/OneDrive/Escritorio/ProyectoAula/imgs/Pantalones/";
+                    break;
+                case "camisas":
+                    imagePath = "C:/Users/USER/OneDrive/Escritorio/ProyectoAula/imgs/Camisas/";
+                    break;
+                case "chaquetas":
+                    imagePath = "C:/Users/USER/OneDrive/Escritorio/ProyectoAula/imgs/Chaquetas/";
+                    break;
+                default:
+                    JOptionPane.showMessageDialog(this, "Categoría no válida.", "Advertencia", JOptionPane.WARNING_MESSAGE);
+                    return;
+            }
+
+            File imageFile = null;
+
+            // Buscar la imagen con diferentes extensiones
+            for (String formato : formatos) {
+                File tempFile = new File(imagePath + imageName + formato);
+                if (tempFile.exists()) {
+                    imageFile = tempFile;
+                    break;
+                }
+            }
+
+            if (imageFile != null && imageFile.exists()) {
+                Image image = ImageIO.read(imageFile);
+                // Redimensionar la imagen si es necesario
+                Image scaledImage = image.getScaledInstance(lblImagen.getWidth(), lblImagen.getHeight(), Image.SCALE_SMOOTH);
+                lblImagen.setIcon(new ImageIcon(scaledImage));
+            } else {
+                lblImagen.setIcon(null); // No se encontró la imagen
+                lblImagen.setText("Imagen no encontrada para el producto seleccionado.");
+            }
+        }
+    }
 
     /**
      * @param args the command line arguments
@@ -563,27 +879,27 @@ public class InsertarProductos extends javax.swing.JFrame {
         txtPreciosSeleccionados.setText(preciosBuilder.toString());
     }
 
-   private void seleccionarImagen() {
-    JFileChooser fileChooser = new JFileChooser();
-    int resultado = fileChooser.showOpenDialog(this);
-    if (resultado == JFileChooser.APPROVE_OPTION) {
-        archivoImagen = fileChooser.getSelectedFile();
-        String productName = txtNombreProducto.getText().replace(' ', '_');
-        String newImageName = productName + "." + archivoImagen.getName().substring(archivoImagen.getName().lastIndexOf('.') + 1);
-        File newImageFile = new File(archivoImagen.getParent(), newImageName);
-        archivoImagen.renameTo(newImageFile);
-        txtRutaImagen.setText(newImageFile.getAbsolutePath());
+    private void seleccionarImagen() {
+        JFileChooser fileChooser = new JFileChooser();
+        int resultado = fileChooser.showOpenDialog(this);
+        if (resultado == JFileChooser.APPROVE_OPTION) {
+            archivoImagen = fileChooser.getSelectedFile();
+            String productName = txtNombreProducto.getText().replace(' ', '_');
+            String newImageName = productName + "." + archivoImagen.getName().substring(archivoImagen.getName().lastIndexOf('.') + 1);
+            File newImageFile = new File(archivoImagen.getParent(), newImageName);
+            archivoImagen.renameTo(newImageFile);
+            txtRutaImagen.setText(newImageFile.getAbsolutePath());
 
-        // Mostrar la imagen en el JLabel
-        try {
-            ImageIcon imageIcon = new ImageIcon(newImageFile.getAbsolutePath());
-            Image image = imageIcon.getImage().getScaledInstance(lblImagen.getWidth(), lblImagen.getHeight(), Image.SCALE_SMOOTH);
-            lblImagen.setIcon(new ImageIcon(image));
-        } catch (Exception e) {
-            JOptionPane.showMessageDialog(this, "Error al cargar la imagen: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            // Mostrar la imagen en el JLabel
+            try {
+                ImageIcon imageIcon = new ImageIcon(newImageFile.getAbsolutePath());
+                Image image = imageIcon.getImage().getScaledInstance(lblImagen.getWidth(), lblImagen.getHeight(), Image.SCALE_SMOOTH);
+                lblImagen.setIcon(new ImageIcon(image));
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(this, "Error al cargar la imagen: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
-}
 
     private void actualizarRutaDestino() {
         String categoriaSeleccionada = (String) cmbCategoria.getSelectedItem();
@@ -706,6 +1022,8 @@ public class InsertarProductos extends javax.swing.JFrame {
     private javax.swing.JButton btnAgregarPrecio;
     private javax.swing.JButton btnAgregarStock;
     private javax.swing.JButton btnInsertar;
+    private javax.swing.JButton btnInsertarTallaNueva;
+    private javax.swing.JButton btnLimpiarCampos;
     private javax.swing.JButton btnSeleccionarImagen;
     private javax.swing.JComboBox<String> cmbCategoria;
     private javax.swing.JComboBox<String> cmbTallas;
@@ -727,11 +1045,12 @@ public class InsertarProductos extends javax.swing.JFrame {
     private javax.swing.JSeparator jSeparator5;
     private javax.swing.JSeparator jSeparator6;
     private javax.swing.JSeparator jSeparator7;
-    private javax.swing.JTable jTable1;
+    private javax.swing.JLabel lblBuscar;
     private javax.swing.JLabel lblImagen;
     private javax.swing.JLabel lblLogo;
     private javax.swing.JLabel lblVolver;
     private javax.swing.JSpinner spnStock;
+    private javax.swing.JTable tablaPro;
     private javax.swing.JTextField txtCarpetaDestino;
     private javax.swing.JTextField txtNombreProducto;
     private javax.swing.JTextField txtPrecio;

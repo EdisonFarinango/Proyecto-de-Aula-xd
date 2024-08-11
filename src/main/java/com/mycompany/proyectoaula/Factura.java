@@ -4,6 +4,11 @@
  */
 package com.mycompany.proyectoaula;
 
+import com.itextpdf.text.DocumentException;
+import java.io.IOException;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import javax.swing.table.DefaultTableModel;
@@ -14,12 +19,16 @@ import javax.swing.table.DefaultTableModel;
  */
 public class Factura extends javax.swing.JFrame {
 
+    private ConexionBD conexion;
+
     public Factura() {
         initComponents();
     }
 
-    public Factura(int idFactura, double subtotal, double iva, double total, String MetodoDePago) {
+    public Factura(int idFactura, double subtotal, double iva, double total, String MetodoDePago, String direccion, String cedula, String envio) {
         initComponents();
+        conexion = new ConexionBD(); // Inicializa la conexión a la base de datos
+
         UtilidadesImagen.escalar(lblLogo, "C:/Users/USER/OneDrive/Escritorio/ProyectoAula/imgs/logos.jpg");
 
         // Inicializa los campos de texto con los valores recibidos
@@ -28,7 +37,11 @@ public class Factura extends javax.swing.JFrame {
         fieldIVA.setText(String.format("%.2f", iva));
         fieldTotal.setText(String.format("%.2f", total));
         fieldMetodo.setText(MetodoDePago);
+        fieldDireccion.setText(direccion);
+        fieldCedula.setText(cedula);
+        fieldEnvio.setText(envio);
         setFechaActual();
+        actualizarLabelUltimoId(); // Actualiza el JLabel con el último ID
 
     }
 
@@ -91,6 +104,10 @@ public class Factura extends javax.swing.JFrame {
         fieldMetodo = new javax.swing.JTextField();
         jLabel10 = new javax.swing.JLabel();
         btnCerrar = new javax.swing.JButton();
+        fieldDireccion = new javax.swing.JTextField();
+        fieldCedula = new javax.swing.JTextField();
+        jLabel11 = new javax.swing.JLabel();
+        fieldEnvio = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setUndecorated(true);
@@ -120,7 +137,7 @@ public class Factura extends javax.swing.JFrame {
         });
         jScrollPane1.setViewportView(tablaFactura);
 
-        jPanel3.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 160, 380, 210));
+        jPanel3.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 160, 380, 200));
 
         jLabel1.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         jLabel1.setText("Nro. Pedido:");
@@ -144,7 +161,7 @@ public class Factura extends javax.swing.JFrame {
         jPanel3.add(fieldFechaPed, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 70, 160, -1));
 
         jLabel4.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
-        jLabel4.setText("Cliente:");
+        jLabel4.setText("C.I Cliente:");
         jPanel3.add(jLabel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(30, 380, -1, -1));
 
         jLabel5.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
@@ -153,32 +170,32 @@ public class Factura extends javax.swing.JFrame {
 
         jLabel6.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         jLabel6.setText("Total:");
-        jPanel3.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 430, -1, -1));
+        jPanel3.add(jLabel6, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 450, -1, -1));
 
         jLabel7.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         jLabel7.setText("Subtotal:");
-        jPanel3.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 380, -1, -1));
+        jPanel3.add(jLabel7, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 380, -1, -1));
 
         jLabel8.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         jLabel8.setText("IVA(15%):");
-        jPanel3.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 400, -1, -1));
-        jPanel3.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(200, 423, 210, 10));
+        jPanel3.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 400, -1, -1));
+        jPanel3.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 440, 170, 10));
 
         fieldTotal.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         fieldTotal.setBorder(null);
-        jPanel3.add(fieldTotal, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 430, 130, -1));
+        jPanel3.add(fieldTotal, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 450, 90, -1));
 
         fieldSubtotal.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         fieldSubtotal.setBorder(null);
-        jPanel3.add(fieldSubtotal, new org.netbeans.lib.awtextra.AbsoluteConstraints(281, 380, 130, -1));
+        jPanel3.add(fieldSubtotal, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 380, 90, -1));
 
         fieldIVA.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         fieldIVA.setBorder(null);
-        jPanel3.add(fieldIVA, new org.netbeans.lib.awtextra.AbsoluteConstraints(280, 400, 130, -1));
+        jPanel3.add(fieldIVA, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 400, 90, -1));
 
         jLabel9.setFont(new java.awt.Font("Roboto", 1, 24)); // NOI18N
         jLabel9.setText("¡GRACIAS POR SU COMPRA!");
-        jPanel3.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 460, -1, -1));
+        jPanel3.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 480, -1, -1));
 
         fieldMetodo.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
         fieldMetodo.setBorder(null);
@@ -198,14 +215,34 @@ public class Factura extends javax.swing.JFrame {
         btnCerrar.setForeground(new java.awt.Color(255, 255, 255));
         btnCerrar.setText("CERRAR");
         btnCerrar.setBorder(null);
+        btnCerrar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnCerrarMouseClicked(evt);
+            }
+        });
         btnCerrar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCerrarActionPerformed(evt);
             }
         });
-        jPanel3.add(btnCerrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 500, 160, 30));
+        jPanel3.add(btnCerrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 520, 160, 30));
 
-        getContentPane().add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 450, 540));
+        fieldDireccion.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        fieldDireccion.setBorder(null);
+        jPanel3.add(fieldDireccion, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 400, 120, -1));
+
+        fieldCedula.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
+        fieldCedula.setBorder(null);
+        jPanel3.add(fieldCedula, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 380, 120, -1));
+
+        jLabel11.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        jLabel11.setText("Envio:");
+        jPanel3.add(jLabel11, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 420, -1, -1));
+
+        fieldEnvio.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
+        jPanel3.add(fieldEnvio, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 420, 90, 20));
+
+        getContentPane().add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 450, 560));
 
         pack();
         setLocationRelativeTo(null);
@@ -216,11 +253,34 @@ public class Factura extends javax.swing.JFrame {
     }//GEN-LAST:event_fieldMetodoActionPerformed
 
     private void btnCerrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarActionPerformed
+        // Crear la instancia de la clase para generar el PDF
+        try {
+            String rutaCarpeta = "factura";
+            FacturasPDF.generarFactura(
+                    rutaCarpeta,
+                    fieldNroFac.getText(),
+                    fieldFechaPed.getText(),
+                    fieldCedula.getText(),
+                    fieldDireccion.getText(),
+                    fieldMetodo.getText(),
+                    fieldSubtotal.getText(),
+                    fieldIVA.getText(),
+                    fieldTotal.getText(),
+                    fieldEnvio.getText(),
+                    (DefaultTableModel) tablaFactura.getModel()
+            );
+        } catch (DocumentException | IOException e) {
+            e.printStackTrace();
+        }
+
         Productos pro = new Productos();
         pro.setVisible(true);
         this.dispose();
-
     }//GEN-LAST:event_btnCerrarActionPerformed
+
+    private void btnCerrarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCerrarMouseClicked
+
+    }//GEN-LAST:event_btnCerrarMouseClicked
 
     /**
      * @param args the command line arguments
@@ -258,9 +318,49 @@ public class Factura extends javax.swing.JFrame {
         });
     }
 
+    private int obtenerUltimoId() {
+        String query = "SELECT MAX(envio_id) AS ultimo_id FROM envios";
+        ResultSet rs = null;
+        Statement st = null;
+        int ultimoId = -1;
+
+        try {
+            st = conexion.conn.createStatement();
+            rs = st.executeQuery(query);
+
+            if (rs.next()) {
+                ultimoId = rs.getInt("ultimo_id");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            // Cierra el ResultSet y Statement en el bloque finally
+            try {
+                if (rs != null && !rs.isClosed()) {
+                    rs.close();
+                }
+                if (st != null && !st.isClosed()) {
+                    st.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return ultimoId;
+    }
+
+    private void actualizarLabelUltimoId() {
+        int ultimoId = obtenerUltimoId();
+        fieldNroPed.setText(String.valueOf(ultimoId));
+    }
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCerrar;
+    private javax.swing.JTextField fieldCedula;
+    private javax.swing.JTextField fieldDireccion;
+    private javax.swing.JLabel fieldEnvio;
     private javax.swing.JTextField fieldFechaPed;
     private javax.swing.JTextField fieldIVA;
     private javax.swing.JTextField fieldMetodo;
@@ -270,6 +370,7 @@ public class Factura extends javax.swing.JFrame {
     private javax.swing.JTextField fieldTotal;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
