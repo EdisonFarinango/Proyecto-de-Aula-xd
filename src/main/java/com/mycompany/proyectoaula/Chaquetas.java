@@ -13,6 +13,8 @@ import javax.imageio.ImageIO;
 import javax.swing.ImageIcon;
 import javax.swing.JOptionPane;
 import javax.swing.JSpinner;
+import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -46,6 +48,21 @@ public class Chaquetas extends javax.swing.JFrame {
         });
 
         TableUtils.centerText(tablaPantalones);
+        tabla();
+
+        comboProductos.setSelectedIndex(-1);
+
+        spinnerCantidad.setValue(0);
+        comboTallas.setSelectedIndex(-1);
+    }
+
+    private void tabla() {
+        // Centrar los encabezados de las columnas
+        ((DefaultTableCellRenderer) tablaPantalones.getTableHeader().getDefaultRenderer())
+                .setHorizontalAlignment(SwingConstants.CENTER);
+// Deshabilitar el movimiento de columnas
+        tablaPantalones.getTableHeader().setReorderingAllowed(false);
+
     }
 
     private void mostrarImagen() throws IOException {
@@ -426,6 +443,7 @@ public class Chaquetas extends javax.swing.JFrame {
         // Crear una nueva instancia de Carrito
         Carrito carrito = new Carrito();
         carrito.setVisible(true);
+        this.dispose();
 
         // Obtener el modelo de la tabla Pantalones
         DefaultTableModel modeloPantalones = (DefaultTableModel) tablaPantalones.getModel();

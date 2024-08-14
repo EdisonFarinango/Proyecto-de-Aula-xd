@@ -20,6 +20,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JSpinner;
+import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
@@ -51,6 +52,7 @@ public class InsertarProductos extends javax.swing.JFrame {
         txtTallasSeleccionadas.setText("");
 
         // deshabilitar todo
+        
         cmbCategoria.setEnabled(false);
         cmbTallas.setEnabled(false);
         txtTallasSeleccionadas.setEnabled(false);
@@ -58,13 +60,61 @@ public class InsertarProductos extends javax.swing.JFrame {
         txtPreciosSeleccionados.setEnabled(false);
         spnStock.setEnabled(false);
         txtStockSeleccionado.setEnabled(false);
+        cargarDatosEnTabla();
     }
 
     private void tabla() {
         ((DefaultTableCellRenderer) tablaPro.getTableHeader().getDefaultRenderer())
                 .setHorizontalAlignment(SwingConstants.CENTER);
+        ((DefaultTableCellRenderer) tablaListaProducto.getTableHeader().getDefaultRenderer())
+                .setHorizontalAlignment(SwingConstants.CENTER);
 
         tablaPro.getTableHeader().setReorderingAllowed(false);
+        tablaListaProducto.getTableHeader().setReorderingAllowed(false);
+    }
+
+    private void cargarDatosEnTabla() {
+        Connection connection = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        // Consulta SQL para obtener solo el nombre del producto
+        String sql = "SELECT DISTINCT p.pro_nombrePro AS NombreProducto "
+                + "FROM productos p "
+                + "JOIN productostallas pt ON p.pro_id = pt.fk_pro_id";
+
+        try {
+            connection = conexionBD.conn; // Obtén la conexión desde ConexionBD
+
+            // Ejecutar la consulta
+            stmt = connection.prepareStatement(sql);
+            rs = stmt.executeQuery();
+
+            // Obtener el modelo de la tabla
+            DefaultTableModel model = (DefaultTableModel) tablaListaProducto.getModel();
+            model.setRowCount(0); // Limpiar la tabla antes de insertar nuevos datos
+
+            // Recorrer los resultados y añadirlos a la tabla
+            while (rs.next()) {
+                String nombreProducto = rs.getString("NombreProducto");
+                model.addRow(new Object[]{nombreProducto});
+            }
+
+        } catch (SQLException e) {
+            System.out.println("Error al cargar datos en la tabla: " + e.getMessage());
+        } finally {
+            // Cierra los recursos sin cerrar la conexión
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (stmt != null) {
+                    stmt.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void cargarCategorias() {
@@ -179,6 +229,9 @@ public class InsertarProductos extends javax.swing.JFrame {
         btnInsertarTallaNueva = new javax.swing.JButton();
         lblBuscar = new javax.swing.JLabel();
         btnLimpiarCampos = new javax.swing.JButton();
+        jPanel4 = new javax.swing.JPanel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tablaListaProducto = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -324,7 +377,7 @@ public class InsertarProductos extends javax.swing.JFrame {
 
         lblImagen.setFont(new java.awt.Font("Roboto Black", 0, 24)); // NOI18N
         lblImagen.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Imagen del producto", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Roboto", 1, 14))); // NOI18N
-        jPanel1.add(lblImagen, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 260, 250, 270));
+        jPanel1.add(lblImagen, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 260, 250, 290));
 
         btnInsertar.setBackground(new java.awt.Color(0, 0, 0));
         btnInsertar.setFont(new java.awt.Font("Roboto", 0, 18)); // NOI18N
@@ -362,7 +415,7 @@ public class InsertarProductos extends javax.swing.JFrame {
         jPanel1.add(jSeparator7, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 560, 300, 10));
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
-        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Lista de Productos y Tallas", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Roboto Black", 0, 24))); // NOI18N
+        jPanel3.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Lista de Tallas Buscadas", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Roboto Black", 0, 24))); // NOI18N
         jPanel3.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         tablaPro.setModel(new javax.swing.table.DefaultTableModel(
@@ -395,9 +448,9 @@ public class InsertarProductos extends javax.swing.JFrame {
             tablaPro.getColumnModel().getColumn(4).setPreferredWidth(0);
         }
 
-        jPanel3.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 360, 400));
+        jPanel3.add(jScrollPane1, new org.netbeans.lib.awtextra.AbsoluteConstraints(10, 40, 360, 170));
 
-        jPanel1.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 80, 380, 450));
+        jPanel1.add(jPanel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 80, 380, 230));
 
         btnInsertarTallaNueva.setBackground(new java.awt.Color(0, 0, 0));
         btnInsertarTallaNueva.setFont(new java.awt.Font("Roboto", 0, 18)); // NOI18N
@@ -430,6 +483,54 @@ public class InsertarProductos extends javax.swing.JFrame {
             }
         });
         jPanel1.add(btnLimpiarCampos, new org.netbeans.lib.awtextra.AbsoluteConstraints(350, 200, 250, 40));
+
+        jPanel4.setBackground(new java.awt.Color(255, 255, 255));
+        jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Lista de Productos", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Roboto Black", 0, 24))); // NOI18N
+
+        jScrollPane2.setBackground(new java.awt.Color(255, 255, 255));
+
+        tablaListaProducto.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null},
+                {null},
+                {null},
+                {null}
+            },
+            new String [] {
+                "Producto"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane2.setViewportView(tablaListaProducto);
+        if (tablaListaProducto.getColumnModel().getColumnCount() > 0) {
+            tablaListaProducto.getColumnModel().getColumn(0).setResizable(false);
+        }
+
+        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
+        jPanel4.setLayout(jPanel4Layout);
+        jPanel4Layout.setHorizontalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 358, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+        jPanel4Layout.setVerticalGroup(
+            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel4Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 182, Short.MAX_VALUE)
+                .addContainerGap())
+        );
+
+        jPanel1.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(610, 320, 380, 230));
 
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 1000, 570));
 
@@ -568,6 +669,7 @@ public class InsertarProductos extends javax.swing.JFrame {
         spnStock.setValue(0);
         txtStockSeleccionado.setText("");
         lblImagen.setIcon(null);
+        txtRutaImagen.setText("");
     }
 
     private void lblBuscarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblBuscarMouseClicked
@@ -990,7 +1092,7 @@ public class InsertarProductos extends javax.swing.JFrame {
                 }
 
                 conn.commit();
-                JOptionPane.showMessageDialog(this, "Producto insertado correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
+                JOptionPane.showMessageDialog(this, "Producto añadido correctamente.", "Éxito", JOptionPane.INFORMATION_MESSAGE);
 
                 // Mover imagen a la carpeta de destino
                 if (rutaImagen != null && !rutaImagen.isEmpty()) {
@@ -999,7 +1101,7 @@ public class InsertarProductos extends javax.swing.JFrame {
                         File destino = new File(carpetaDestino, archivoImagen.getName());
                         try {
                             Files.copy(archivoImagen.toPath(), destino.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                            JOptionPane.showMessageDialog(this, "Imagen guardada con éxito en " + destino.getAbsolutePath(), "Éxito", JOptionPane.INFORMATION_MESSAGE);
+//                            JOptionPane.showMessageDialog(this, "Imagen guardada con éxito en " + destino.getAbsolutePath(), "Éxito", JOptionPane.INFORMATION_MESSAGE);
                         } catch (IOException ioEx) {
                             JOptionPane.showMessageDialog(this, "Error al guardar la imagen: " + ioEx.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
                             ioEx.printStackTrace();
@@ -1037,7 +1139,9 @@ public class InsertarProductos extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JSeparator jSeparator2;
     private javax.swing.JSeparator jSeparator3;
@@ -1050,6 +1154,7 @@ public class InsertarProductos extends javax.swing.JFrame {
     private javax.swing.JLabel lblLogo;
     private javax.swing.JLabel lblVolver;
     private javax.swing.JSpinner spnStock;
+    private javax.swing.JTable tablaListaProducto;
     private javax.swing.JTable tablaPro;
     private javax.swing.JTextField txtCarpetaDestino;
     private javax.swing.JTextField txtNombreProducto;

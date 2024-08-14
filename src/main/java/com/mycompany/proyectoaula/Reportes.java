@@ -18,6 +18,8 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -51,6 +53,25 @@ public class Reportes extends javax.swing.JFrame {
         btnImprimir.setEnabled(false);
         btnImprimirCli.setEnabled(false);
         btnImprimirPro.setEnabled(false);
+        tabla();
+    }
+
+    private void tabla() {
+        // Centrar los encabezados de las columnas
+        ((DefaultTableCellRenderer) tablaListaFacturas.getTableHeader().getDefaultRenderer())
+                .setHorizontalAlignment(SwingConstants.CENTER);
+        ((DefaultTableCellRenderer) tablaListaProductos.getTableHeader().getDefaultRenderer())
+                .setHorizontalAlignment(SwingConstants.CENTER);
+        ((DefaultTableCellRenderer) TablaTotalClientes.getTableHeader().getDefaultRenderer())
+                .setHorizontalAlignment(SwingConstants.CENTER);
+        ((DefaultTableCellRenderer) tablaListaClientes.getTableHeader().getDefaultRenderer())
+                .setHorizontalAlignment(SwingConstants.CENTER);
+        // Deshabilitar el movimiento de columnas
+        tablaListaFacturas.getTableHeader().setReorderingAllowed(false);
+        tablaListaProductos.getTableHeader().setReorderingAllowed(false);
+        TablaTotalClientes.getTableHeader().setReorderingAllowed(false);
+        tablaListaClientes.getTableHeader().setReorderingAllowed(false);
+
     }
 
     /**
@@ -560,6 +581,7 @@ public class Reportes extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Las fechas no pueden ser posteriores a la fecha actual.", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
+
         // Formatea las fechas a String en formato yyyy-MM-dd
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         String fechaInicioStr = sdf.format(fechaInicio);
@@ -570,26 +592,14 @@ public class Reportes extends javax.swing.JFrame {
         conexion.conectar();
 
         try {
-            // Consulta SQL para obtener las facturas en el intervalo de fechas
-            String sql = "SELECT "
-                    + "    fac_id AS 'ID Factura', "
-                    + "    fk_usu_cedula AS 'Cédula del Usuario', "
-                    + "    fac_total AS 'Total', "
-                    + "    fac_iva AS 'IVA', "
-                    + "    fac_fecha AS 'Fecha', "
-                    + "    fk_metodo_id AS 'Método de Pago', "
-                    + "    fac_subtotal AS 'Subtotal' "
-                    + "FROM "
-                    + "    factura "
-                    + "WHERE "
-                    + "    fac_fecha BETWEEN ? AND ?";
+            // Llama al Stored Procedure para obtener las facturas en el intervalo de fechas
+            String sp = "{CALL sp_obtenerFacturasPorFechas(?, ?)}";
+            CallableStatement cs = conexion.conn.prepareCall(sp);
+            cs.setString(1, fechaInicioStr);
+            cs.setString(2, fechaFinStr);
 
-            PreparedStatement ps = conexion.conn.prepareStatement(sql);
-            ps.setString(1, fechaInicioStr);
-            ps.setString(2, fechaFinStr);
-
-            // Ejecuta la consulta
-            ResultSet rs = ps.executeQuery();
+            // Ejecuta el SP y obtiene los resultados
+            ResultSet rs = cs.executeQuery();
 
             // Configura el modelo de la tabla
             DefaultTableModel model = new DefaultTableModel();
@@ -617,7 +627,7 @@ public class Reportes extends javax.swing.JFrame {
             tablaListaFacturas.setModel(model);
             btnImprimir.setEnabled(true);
             rs.close();
-            ps.close();
+            cs.close();
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(this, "Error al consultar las facturas: " + ex.getMessage());
             ex.printStackTrace();
@@ -758,7 +768,7 @@ public class Reportes extends javax.swing.JFrame {
     private void btnImprimirProActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImprimirProActionPerformed
         ProductosListaPDF reportePDF = new ProductosListaPDF(fechaMinPro, fechaMaxPro);
         reportePDF.generarReporteProductos(tablaListaProductos);
-         String rutaPDF = "C:\\Users\\USER\\OneDrive\\Documentos\\NetBeansProjects\\ProyectoAula\\ReporteProductos"; // reemplaza con la ruta real del directorio donde se generan los PDF
+        String rutaPDF = "C:\\Users\\USER\\OneDrive\\Documentos\\NetBeansProjects\\ProyectoAula\\ReporteProductos"; // reemplaza con la ruta real del directorio donde se generan los PDF
         File dir = new File(rutaPDF);
         File[] files = dir.listFiles((dir1, name) -> name.endsWith(".pdf"));
         Arrays.sort(files, (f1, f2) -> Long.compare(f2.lastModified(), f1.lastModified()));
@@ -775,7 +785,7 @@ public class Reportes extends javax.swing.JFrame {
     private void btnImprimirCliActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnImprimirCliActionPerformed
         ClientesListaPDF reportePDF = new ClientesListaPDF(fechaMinCli, fechaMaxCli);
         reportePDF.generarReporteClientes(tablaListaClientes, TablaTotalClientes);
-         String rutaPDF = "C:\\Users\\USER\\OneDrive\\Documentos\\NetBeansProjects\\ProyectoAula\\ReporteClientes"; // reemplaza con la ruta real del directorio donde se generan los PDF
+        String rutaPDF = "C:\\Users\\USER\\OneDrive\\Documentos\\NetBeansProjects\\ProyectoAula\\ReporteClientes"; // reemplaza con la ruta real del directorio donde se generan los PDF
         File dir = new File(rutaPDF);
         File[] files = dir.listFiles((dir1, name) -> name.endsWith(".pdf"));
         Arrays.sort(files, (f1, f2) -> Long.compare(f2.lastModified(), f1.lastModified()));
@@ -794,10 +804,9 @@ public class Reportes extends javax.swing.JFrame {
         DefaultTableModel modelo = (DefaultTableModel) TablaTotalClientes.getModel();
         modelo.setRowCount(0); // Limpiar la tabla antes de agregar nuevos datos
 
-        String query = "SELECT usu_nombre AS nombre, usu_apellido AS apellido, usu_cedula AS cedula, usu_correoElectronico AS correo "
-                + "FROM usuarios";
+        String sp = "{CALL sp_obtenerClientes()}"; // Llamada al Stored Procedure
 
-        try (PreparedStatement pst = conexion.conn.prepareStatement(query); ResultSet rs = pst.executeQuery()) {
+        try (CallableStatement cs = conexion.conn.prepareCall(sp); ResultSet rs = cs.executeQuery()) {
 
             while (rs.next()) {
                 Object[] row = {
@@ -818,21 +827,13 @@ public class Reportes extends javax.swing.JFrame {
         DefaultTableModel modelo = (DefaultTableModel) tablaListaClientes.getModel();
         modelo.setRowCount(0); // Limpiar la tabla antes de agregar nuevos datos
 
-        String query = "SELECT "
-                + "u.usu_nombre AS nombre, "
-                + "u.usu_apellido AS apellido, "
-                + "u.usu_cedula AS cedula, "
-                + "COUNT(ll.log_id) AS veces_que_ha_entrado "
-                + "FROM login_logs ll "
-                + "JOIN usuarios u ON ll.usu_cedula = u.usu_cedula "
-                + "WHERE ll.log_fecha BETWEEN ? AND ? "
-                + "GROUP BY u.usu_cedula "
-                + "ORDER BY veces_que_ha_entrado DESC;";
+        String sp = "{CALL sp_obtenerClientesPorFechas(?, ?)}"; // Llamada al Stored Procedure
 
-        try (PreparedStatement pst = conexion.conn.prepareStatement(query)) {
-            pst.setDate(1, fechaInicio);
-            pst.setDate(2, fechaFin);
-            try (ResultSet rs = pst.executeQuery()) {
+        try (CallableStatement cs = conexion.conn.prepareCall(sp)) {
+            cs.setDate(1, fechaInicio);
+            cs.setDate(2, fechaFin);
+
+            try (ResultSet rs = cs.executeQuery()) {
                 while (rs.next()) {
                     String nombre = rs.getString("nombre");
                     String apellido = rs.getString("apellido");
@@ -860,22 +861,13 @@ public class Reportes extends javax.swing.JFrame {
         DefaultTableModel modelo = (DefaultTableModel) tablaListaProductos.getModel();
         modelo.setRowCount(0); // Limpiar la tabla antes de agregar nuevos datos
 
-        String query = "SELECT p.pro_id AS 'ID Producto', p.pro_nombrePro AS 'Nombre Producto', "
-                + "t.talla_nombre AS 'Talla', SUM(df.cantidad) AS 'Cantidad Vendida', "
-                + "SUM(df.cantidad * df.precio_unitario) AS 'Total Vendido' "
-                + "FROM detallefactura df "
-                + "JOIN factura f ON df.fk_fac_id = f.fac_id "
-                + "JOIN productostallas pt ON df.productostallas_pro_talla_id = pt.pro_talla_id "
-                + "JOIN productos p ON pt.fk_pro_id = p.pro_id "
-                + "JOIN tallas t ON pt.fk_talla_id = t.talla_id "
-                + "WHERE f.fac_fecha BETWEEN ? AND ? "
-                + "GROUP BY p.pro_id, p.pro_nombrePro, t.talla_nombre "
-                + "ORDER BY SUM(df.cantidad) DESC;";
+        String sp = "{CALL sp_obtenerProductosVendidosPorFechas(?, ?)}"; // Llamada al Stored Procedure
 
-        try (PreparedStatement pst = conexion.conn.prepareStatement(query)) {
-            pst.setDate(1, fechaInicio);
-            pst.setDate(2, fechaFin);
-            try (ResultSet rs = pst.executeQuery()) {
+        try (CallableStatement cs = conexion.conn.prepareCall(sp)) {
+            cs.setDate(1, fechaInicio);
+            cs.setDate(2, fechaFin);
+
+            try (ResultSet rs = cs.executeQuery()) {
                 while (rs.next()) {
                     Object[] row = {
                         rs.getInt("ID Producto"),

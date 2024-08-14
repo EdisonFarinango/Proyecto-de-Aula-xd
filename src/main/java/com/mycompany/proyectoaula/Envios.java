@@ -8,6 +8,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 public class Envios extends javax.swing.JFrame {
@@ -19,71 +21,87 @@ public class Envios extends javax.swing.JFrame {
         conexion = new ConexionBD(); // Inicializa la conexión a la base de datos
         UtilidadesImagen.escalar(lblLogo, "C:/Users/USER/OneDrive/Escritorio/ProyectoAula/imgs/logo.jpg");
         UtilidadesImagen.escalar(lblVolver, "C:/Users/USER/OneDrive/Escritorio/ProyectoAula/imgs/volver.png");
+        tabla();
+    }
+
+    //Metodo para evitar mover las columnas y centrar los encabezados
+    private void tabla() {
+        // Centrar los encabezados de las columnas
+        ((DefaultTableCellRenderer) tablaDetalles.getTableHeader().getDefaultRenderer())
+                .setHorizontalAlignment(SwingConstants.CENTER);
+        ((DefaultTableCellRenderer) tablaPedidos.getTableHeader().getDefaultRenderer())
+                .setHorizontalAlignment(SwingConstants.CENTER);
+        // Deshabilitar el movimiento de columnas
+        tablaDetalles.getTableHeader().setReorderingAllowed(false);
+        tablaPedidos.getTableHeader().setReorderingAllowed(false);
 
     }
 
-private void cargarDatosPedidos() {
-    // Obtén el estado seleccionado en el JComboBox
-    String estadoFiltro = (String) cmbFiltro.getSelectedItem();
-    
-    // Construye la consulta SQL basada en el filtro seleccionado
-    String query;
-    if ("Todos".equals(estadoFiltro)) {
-        query = "SELECT f.fac_id AS 'ID Factura', u.usu_cedula AS 'C.I Cliente', u.direccion AS 'Dirección', e.estado AS 'Estado' "
-                + "FROM envios e "
-                + "JOIN factura f ON e.fk_fac_id = f.fac_id "
-                + "JOIN usuarios u ON f.fk_usu_cedula = u.usu_cedula";
-    } else {
-        query = "SELECT f.fac_id AS 'ID Factura', u.usu_cedula AS 'C.I Cliente', u.direccion AS 'Dirección', e.estado AS 'Estado' "
-                + "FROM envios e "
-                + "JOIN factura f ON e.fk_fac_id = f.fac_id "
-                + "JOIN usuarios u ON f.fk_usu_cedula = u.usu_cedula "
-                + "WHERE e.estado = ?";
-    }
+    private void cargarDatosPedidos() {
+        // Obtén el estado seleccionado en el JComboBox
+        String estadoFiltro = (String) cmbFiltro.getSelectedItem();
 
-    ResultSet rs = null;
-    PreparedStatement pst = null;
-    Statement st = null;
-    try {
+        // Construye la consulta SQL basada en el filtro seleccionado
+        String query;
         if ("Todos".equals(estadoFiltro)) {
-            st = conexion.conn.createStatement();
-            rs = st.executeQuery(query);
+            query = "SELECT f.fac_id AS 'ID Factura', u.usu_cedula AS 'C.I Cliente', u.direccion AS 'Dirección', e.estado AS 'Estado', m.metodo_nombre AS 'Método de Pago' "
+                    + "FROM envios e "
+                    + "JOIN factura f ON e.fk_fac_id = f.fac_id "
+                    + "JOIN usuarios u ON f.fk_usu_cedula = u.usu_cedula "
+                    + "JOIN metodos_pago m ON f.fk_metodo_id = m.metodo_id";
         } else {
-            pst = conexion.conn.prepareStatement(query);
-            pst.setString(1, estadoFiltro);
-            rs = pst.executeQuery();
+            query = "SELECT f.fac_id AS 'ID Factura', u.usu_cedula AS 'C.I Cliente', u.direccion AS 'Dirección', e.estado AS 'Estado', m.metodo_nombre AS 'Método de Pago' "
+                    + "FROM envios e "
+                    + "JOIN factura f ON e.fk_fac_id = f.fac_id "
+                    + "JOIN usuarios u ON f.fk_usu_cedula = u.usu_cedula "
+                    + "JOIN metodos_pago m ON f.fk_metodo_id = m.metodo_id "
+                    + "WHERE e.estado = ?";
         }
 
-        DefaultTableModel model = (DefaultTableModel) tablaPedidos.getModel();
-        model.setRowCount(0); // Limpia la tabla antes de cargar nuevos datos
-
-        while (rs.next()) {
-            Object[] row = new Object[4];
-            row[0] = rs.getInt("ID Factura");
-            row[1] = rs.getString("C.I Cliente");
-            row[2] = rs.getString("Dirección");
-            row[3] = rs.getString("Estado");
-            model.addRow(row);
-        }
-    } catch (SQLException e) {
-        e.printStackTrace();
-    } finally {
-        // Cierra el ResultSet, Statement y PreparedStatement en el bloque finally
+        ResultSet rs = null;
+        PreparedStatement pst = null;
+        Statement st = null;
         try {
-            if (rs != null && !rs.isClosed()) {
-                rs.close();
+            if ("Todos".equals(estadoFiltro)) {
+                st = conexion.conn.createStatement();
+                rs = st.executeQuery(query);
+            } else {
+                pst = conexion.conn.prepareStatement(query);
+                pst.setString(1, estadoFiltro);
+                rs = pst.executeQuery();
             }
-            if (st != null && !st.isClosed()) {
-                st.close();
-            }
-            if (pst != null && !pst.isClosed()) {
-                pst.close();
+
+            DefaultTableModel model = (DefaultTableModel) tablaPedidos.getModel();
+            model.setRowCount(0); // Limpia la tabla antes de cargar nuevos datos
+
+            while (rs.next()) {
+                Object[] row = new Object[5]; // Cambié el tamaño del array a 5
+                row[0] = rs.getInt("ID Factura");
+                row[1] = rs.getString("C.I Cliente");
+                row[2] = rs.getString("Dirección");
+                row[3] = rs.getString("Estado");
+                row[4] = rs.getString("Método de Pago"); // Añadí el método de pago
+                model.addRow(row);
             }
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            // Cierra el ResultSet, Statement y PreparedStatement en el bloque finally
+            try {
+                if (rs != null && !rs.isClosed()) {
+                    rs.close();
+                }
+                if (st != null && !st.isClosed()) {
+                    st.close();
+                }
+                if (pst != null && !pst.isClosed()) {
+                    pst.close();
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
         }
     }
-}
 
     private void cargarDatosDetalles(int idFactura) {
         String query = "SELECT p.pro_nombrePro AS 'Producto', t.talla_nombre AS 'Talla', df.cantidad AS 'Cantidad' "
@@ -287,11 +305,11 @@ private void cargarDatosPedidos() {
 
             },
             new String [] {
-                "Nro. Factura", "C.I Cliente", "Dirección", "Estado"
+                "Nro. Factura", "C.I Cliente", "Dirección", "Estado", "Método de Pago"
             }
         ) {
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false, false, false
             };
 
             public boolean isCellEditable(int rowIndex, int columnIndex) {
@@ -306,9 +324,11 @@ private void cargarDatosPedidos() {
         jScrollPane2.setViewportView(tablaPedidos);
         if (tablaPedidos.getColumnModel().getColumnCount() > 0) {
             tablaPedidos.getColumnModel().getColumn(0).setResizable(false);
+            tablaPedidos.getColumnModel().getColumn(0).setPreferredWidth(5);
             tablaPedidos.getColumnModel().getColumn(1).setResizable(false);
             tablaPedidos.getColumnModel().getColumn(2).setResizable(false);
             tablaPedidos.getColumnModel().getColumn(3).setResizable(false);
+            tablaPedidos.getColumnModel().getColumn(4).setResizable(false);
         }
 
         jScrollPane3.setViewportView(jScrollPane2);
@@ -353,6 +373,7 @@ private void cargarDatosPedidos() {
         getContentPane().add(jPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 860, 530));
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCambiarEstadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCambiarEstadoActionPerformed

@@ -19,6 +19,7 @@ public class Productos extends javax.swing.JFrame {
         UtilidadesImagen.escalar(lblLogo, "C:/Users/USER/OneDrive/Escritorio/ProyectoAula/imgs/logo.jpg");
         UtilidadesImagen.escalar(lblVolver, "C:/Users/USER/OneDrive/Escritorio/ProyectoAula/imgs/salir.png");
         UtilidadesImagen.escalar(lblCarrito, "C:/Users/USER/OneDrive/Escritorio/ProyectoAula/imgs/carrito.png");
+        UtilidadesImagen.escalar(lblPerfil, "C:/Users/USER/OneDrive/Escritorio/ProyectoAula/imgs/perfil.png");
 
         UtilidadesImagen.escalar(lblCamisas, "C:/Users/USER/OneDrive/Escritorio/ProyectoAula/imgs/camisetas.png");
         UtilidadesImagen.escalar(lblPantalones, "C:/Users/USER/OneDrive/Escritorio/ProyectoAula/imgs/pants.png");
@@ -50,6 +51,7 @@ public class Productos extends javax.swing.JFrame {
         jPanel6 = new javax.swing.JPanel();
         lblChaquetas = new javax.swing.JLabel();
         btnChaquetas = new javax.swing.JButton();
+        lblPerfil = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
@@ -80,29 +82,30 @@ public class Productos extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(21, 21, 21)
                 .addComponent(lblVolver, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 637, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(45, 45, 45)
+                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 571, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(71, 71, 71)
                 .addComponent(lblLogo, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(29, Short.MAX_VALUE))
+                .addContainerGap(9, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(lblLogo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGap(0, 0, Short.MAX_VALUE)
-                        .addComponent(jLabel4)))
+                .addComponent(lblLogo, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(3, 3, 3))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(lblVolver, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(jLabel4))
+                    .addComponent(lblVolver, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
         jPanel1.add(jPanel2, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 820, 60));
 
+        jPanel4.setBackground(new java.awt.Color(255, 255, 255));
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "SELECCIONE SU PREFERENCIA", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Roboto Black", 0, 36))); // NOI18N
         jPanel4.setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
@@ -112,9 +115,16 @@ public class Productos extends javax.swing.JFrame {
                 lblCarritoMouseClicked(evt);
             }
         });
-        jPanel4.add(lblCarrito, new org.netbeans.lib.awtextra.AbsoluteConstraints(700, 0, 50, 50));
+        jPanel4.add(lblCarrito, new org.netbeans.lib.awtextra.AbsoluteConstraints(710, 0, 50, 50));
 
         jPanel3.setBackground(new java.awt.Color(0, 0, 0));
+
+        lblPantalones.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblPantalones.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblPantalonesMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -153,6 +163,13 @@ public class Productos extends javax.swing.JFrame {
 
         jPanel5.setBackground(new java.awt.Color(0, 0, 0));
 
+        lblCamisas.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblCamisas.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblCamisasMouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
         jPanel5Layout.setHorizontalGroup(
@@ -167,6 +184,13 @@ public class Productos extends javax.swing.JFrame {
         jPanel4.add(jPanel5, new org.netbeans.lib.awtextra.AbsoluteConstraints(270, 70, 240, 260));
 
         jPanel6.setBackground(new java.awt.Color(0, 0, 0));
+
+        lblChaquetas.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblChaquetas.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblChaquetasMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
@@ -191,6 +215,14 @@ public class Productos extends javax.swing.JFrame {
             }
         });
         jPanel4.add(btnChaquetas, new org.netbeans.lib.awtextra.AbsoluteConstraints(520, 340, 240, 40));
+
+        lblPerfil.setCursor(new java.awt.Cursor(java.awt.Cursor.HAND_CURSOR));
+        lblPerfil.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lblPerfilMouseClicked(evt);
+            }
+        });
+        jPanel4.add(lblPerfil, new org.netbeans.lib.awtextra.AbsoluteConstraints(650, 0, 50, 50));
 
         jPanel1.add(jPanel4, new org.netbeans.lib.awtextra.AbsoluteConstraints(20, 80, 780, 410));
 
@@ -234,6 +266,31 @@ public class Productos extends javax.swing.JFrame {
         this.dispose();
 
     }//GEN-LAST:event_btnChaquetasActionPerformed
+
+    private void lblPerfilMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblPerfilMouseClicked
+        Perfil perfil = new Perfil();
+        perfil.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_lblPerfilMouseClicked
+
+    private void lblPantalonesMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblPantalonesMouseClicked
+        Pantalones pants = new Pantalones();
+        pants.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_lblPantalonesMouseClicked
+
+    private void lblCamisasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblCamisasMouseClicked
+        Camisetas camisa = new Camisetas();
+        camisa.setVisible(true);
+        this.dispose();
+    }//GEN-LAST:event_lblCamisasMouseClicked
+
+    private void lblChaquetasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lblChaquetasMouseClicked
+        Chaquetas chaquetas = new Chaquetas();
+        chaquetas.setVisible(true);
+        this.dispose();
+
+    }//GEN-LAST:event_lblChaquetasMouseClicked
 
     /**
      * @param args the command line arguments
@@ -286,6 +343,7 @@ public class Productos extends javax.swing.JFrame {
     private javax.swing.JLabel lblChaquetas;
     private javax.swing.JLabel lblLogo;
     private javax.swing.JLabel lblPantalones;
+    private javax.swing.JLabel lblPerfil;
     private javax.swing.JLabel lblVolver;
     // End of variables declaration//GEN-END:variables
 }

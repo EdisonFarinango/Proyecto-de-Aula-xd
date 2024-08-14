@@ -5,12 +5,18 @@
 package com.mycompany.proyectoaula;
 
 import com.itextpdf.text.DocumentException;
+import java.awt.Desktop;
+import java.io.File;
 import java.io.IOException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import javax.swing.JOptionPane;
+import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -42,6 +48,15 @@ public class Factura extends javax.swing.JFrame {
         fieldEnvio.setText(envio);
         setFechaActual();
         actualizarLabelUltimoId(); // Actualiza el JLabel con el último ID
+        tabla();
+    }
+
+    private void tabla() {
+        // Centrar los encabezados de las columnas
+        ((DefaultTableCellRenderer) tablaFactura.getTableHeader().getDefaultRenderer())
+                .setHorizontalAlignment(SwingConstants.CENTER);
+        // Deshabilitar el movimiento de columnas
+        tablaFactura.getTableHeader().setReorderingAllowed(false);
 
     }
 
@@ -151,12 +166,15 @@ public class Factura extends javax.swing.JFrame {
         jLabel3.setText("Fecha de Pedido:");
         jPanel3.add(jLabel3, new org.netbeans.lib.awtextra.AbsoluteConstraints(150, 70, -1, -1));
 
+        fieldNroPed.setEditable(false);
         fieldNroPed.setBorder(null);
         jPanel3.add(fieldNroPed, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 100, 160, -1));
 
+        fieldNroFac.setEditable(false);
         fieldNroFac.setBorder(null);
         jPanel3.add(fieldNroFac, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 40, 160, -1));
 
+        fieldFechaPed.setEditable(false);
         fieldFechaPed.setBorder(null);
         jPanel3.add(fieldFechaPed, new org.netbeans.lib.awtextra.AbsoluteConstraints(260, 70, 160, -1));
 
@@ -181,14 +199,22 @@ public class Factura extends javax.swing.JFrame {
         jPanel3.add(jLabel8, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 400, -1, -1));
         jPanel3.add(jSeparator1, new org.netbeans.lib.awtextra.AbsoluteConstraints(240, 440, 170, 10));
 
+        fieldTotal.setEditable(false);
         fieldTotal.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         fieldTotal.setBorder(null);
         jPanel3.add(fieldTotal, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 450, 90, -1));
 
+        fieldSubtotal.setEditable(false);
         fieldSubtotal.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         fieldSubtotal.setBorder(null);
+        fieldSubtotal.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                fieldSubtotalActionPerformed(evt);
+            }
+        });
         jPanel3.add(fieldSubtotal, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 380, 90, -1));
 
+        fieldIVA.setEditable(false);
         fieldIVA.setFont(new java.awt.Font("Roboto", 0, 14)); // NOI18N
         fieldIVA.setBorder(null);
         jPanel3.add(fieldIVA, new org.netbeans.lib.awtextra.AbsoluteConstraints(320, 400, 90, -1));
@@ -197,6 +223,7 @@ public class Factura extends javax.swing.JFrame {
         jLabel9.setText("¡GRACIAS POR SU COMPRA!");
         jPanel3.add(jLabel9, new org.netbeans.lib.awtextra.AbsoluteConstraints(60, 480, -1, -1));
 
+        fieldMetodo.setEditable(false);
         fieldMetodo.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
         fieldMetodo.setBorder(null);
         fieldMetodo.addActionListener(new java.awt.event.ActionListener() {
@@ -227,10 +254,12 @@ public class Factura extends javax.swing.JFrame {
         });
         jPanel3.add(btnCerrar, new org.netbeans.lib.awtextra.AbsoluteConstraints(130, 520, 160, 30));
 
+        fieldDireccion.setEditable(false);
         fieldDireccion.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
         fieldDireccion.setBorder(null);
         jPanel3.add(fieldDireccion, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 400, 120, -1));
 
+        fieldCedula.setEditable(false);
         fieldCedula.setFont(new java.awt.Font("Roboto", 0, 12)); // NOI18N
         fieldCedula.setBorder(null);
         jPanel3.add(fieldCedula, new org.netbeans.lib.awtextra.AbsoluteConstraints(100, 380, 120, -1));
@@ -269,6 +298,19 @@ public class Factura extends javax.swing.JFrame {
                     fieldEnvio.getText(),
                     (DefaultTableModel) tablaFactura.getModel()
             );
+
+            String rutaPDF = "C:\\Users\\USER\\OneDrive\\Documentos\\NetBeansProjects\\ProyectoAula\\factura"; // reemplaza con la ruta real del directorio donde se generan los PDF
+            File dir = new File(rutaPDF);
+            File[] files = dir.listFiles((dir1, name) -> name.endsWith(".pdf"));
+            Arrays.sort(files, (f1, f2) -> Long.compare(f2.lastModified(), f1.lastModified()));
+            File lastPdf = files[0];
+            try {
+                Desktop desktop = Desktop.getDesktop();
+                desktop.open(lastPdf);
+                System.out.println("Reporte impreso correctamente.");
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this, "Error al abrir el archivo PDF: " + e.getMessage());
+            }
         } catch (DocumentException | IOException e) {
             e.printStackTrace();
         }
@@ -281,6 +323,10 @@ public class Factura extends javax.swing.JFrame {
     private void btnCerrarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnCerrarMouseClicked
 
     }//GEN-LAST:event_btnCerrarMouseClicked
+
+    private void fieldSubtotalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fieldSubtotalActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_fieldSubtotalActionPerformed
 
     /**
      * @param args the command line arguments

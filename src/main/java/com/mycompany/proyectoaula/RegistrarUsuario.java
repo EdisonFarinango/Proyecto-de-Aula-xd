@@ -30,7 +30,7 @@ public class RegistrarUsuario extends javax.swing.JFrame {
         String telefono = fieldTelefono.getText().trim();
         String correoElectronico = fieldCorreo.getText().trim();
         String usuario = fieldUsuario.getText().trim();
-        String clave = new String(fieldContrasenia.getPassword()).trim(); 
+        String clave = new String(fieldContrasenia.getPassword()).trim();
 
         try {
             ResultSet rs = user.ejecutarSPUsuario(operacion, cedula, nombre, apellido, telefono, correoElectronico, usuario, clave);
@@ -39,11 +39,11 @@ public class RegistrarUsuario extends javax.swing.JFrame {
             } else {
                 switch (operacion) {
                     case 2 ->
-                        JOptionPane.showMessageDialog(this, "Empleado insertado correctamente.");
+                        JOptionPane.showMessageDialog(this, "Cliente añadido correctamente.");
                     case 3 ->
-                        JOptionPane.showMessageDialog(this, "Empleado actualizado correctamente.");
+                        JOptionPane.showMessageDialog(this, "Cliente añadido correctamente.");
                     case 4 ->
-                        JOptionPane.showMessageDialog(this, "Empleado eliminado correctamente.");
+                        JOptionPane.showMessageDialog(this, "Cliente añadido correctamente.");
                     default -> {
                     }
                 }
@@ -69,16 +69,16 @@ public class RegistrarUsuario extends javax.swing.JFrame {
             } else {
                 switch (operacion) {
                     case 2:
-                        JOptionPane.showMessageDialog(this, "Pregunta insertada correctamente.");
+                        System.out.println("Pregunta insertada correctamente.");
                         break;
                     case 3:
-                        JOptionPane.showMessageDialog(this, "Pregunta actualizada correctamente.");
+                        System.out.println("Pregunta actualizada correctamente.");
                         break;
                     case 4:
-                        JOptionPane.showMessageDialog(this, "Pregunta eliminada correctamente.");
+                        System.out.println("Pregunta eliminada correctamente.");
                         break;
                     default:
-                        JOptionPane.showMessageDialog(this, "Operación no válida.");
+                        System.out.println("Operación no válida.");
                         break;
                 }
             }
@@ -214,6 +214,11 @@ public class RegistrarUsuario extends javax.swing.JFrame {
         jPanel1.add(fieldUsuario, new org.netbeans.lib.awtextra.AbsoluteConstraints(418, 178, 283, 30));
 
         fieldContrasenia.setBorder(null);
+        fieldContrasenia.addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusLost(java.awt.event.FocusEvent evt) {
+                fieldContraseniaFocusLost(evt);
+            }
+        });
         jPanel1.add(fieldContrasenia, new org.netbeans.lib.awtextra.AbsoluteConstraints(418, 237, 283, 30));
         jPanel1.add(jSeparator2, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 210, 283, 10));
         jPanel1.add(jSeparator3, new org.netbeans.lib.awtextra.AbsoluteConstraints(420, 260, 283, 10));
@@ -359,14 +364,10 @@ public class RegistrarUsuario extends javax.swing.JFrame {
 
 
     private void CheckMostrarPassActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CheckMostrarPassActionPerformed
-        boolean mostrarContrasenia = false;
-
-        if (mostrarContrasenia) {
-            fieldContrasenia.setEchoChar('*');
-            mostrarContrasenia = false;
+        if (CheckMostrarPass.isSelected()) {
+            fieldContrasenia.setEchoChar((char) 0); // Muestra la contraseña
         } else {
-            fieldContrasenia.setEchoChar((char) 0);
-            mostrarContrasenia = true;
+            fieldContrasenia.setEchoChar('*'); // Oculta la contraseña
         }
     }//GEN-LAST:event_CheckMostrarPassActionPerformed
 
@@ -380,6 +381,14 @@ public class RegistrarUsuario extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Por favor, complete todos los campos antes de continuar.");
         }
     }//GEN-LAST:event_btnRegistrarseMouseClicked
+
+    private void fieldContraseniaFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_fieldContraseniaFocusLost
+        String clave = fieldContrasenia.getText();
+        if (clave.length() < 8) {
+            JOptionPane.showMessageDialog(null, "La clave debe tener al menos 8 caracteres");
+            fieldContrasenia.requestFocus(); // Devolver el foco al campo clave
+        }
+    }//GEN-LAST:event_fieldContraseniaFocusLost
 
     /**
      * @param args the command line arguments
@@ -424,7 +433,7 @@ public class RegistrarUsuario extends javax.swing.JFrame {
                 && !fieldTelefono.getText().trim().isEmpty()
                 && !fieldCorreo.getText().trim().isEmpty()
                 && !fieldUsuario.getText().trim().isEmpty()
-                && !clave.isEmpty(); 
+                && !clave.isEmpty();
     }
 
 

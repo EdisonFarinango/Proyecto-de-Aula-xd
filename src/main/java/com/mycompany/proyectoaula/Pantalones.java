@@ -31,6 +31,7 @@ public class Pantalones extends javax.swing.JFrame {
         UtilidadesImagen.escalar(lblLogo, "C:/Users/USER/OneDrive/Escritorio/ProyectoAula/imgs/logo.jpg");
         UtilidadesImagen.escalar(lblVolver, "C:/Users/USER/OneDrive/Escritorio/ProyectoAula/imgs/volver.png");
         conexion = new ConexionBD();
+
         ProductosCat.llenarComboProductos(comboProductos);
 
         // Añadir un listener al JComboBox
@@ -47,7 +48,10 @@ public class Pantalones extends javax.swing.JFrame {
         TableUtils.centerText(tablaPantalones);
         tabla();
 
-       
+        comboProductos.setSelectedIndex(-1);
+
+        spinnerCantidad.setValue(0);
+        comboTallas.setSelectedIndex(-1);
     }
 
     //Metodo para evitar mover las columnas y centrar los encabezados
